@@ -6,6 +6,7 @@ import FlavorStepsManager, {
   type FlavorStepRow,
 } from "@/app/(app)/flavors/FlavorStepsManager";
 import FlavorCaptions from "@/app/(app)/flavors/FlavorCaptions";
+import FlavorTestForm from "@/app/(app)/flavors/FlavorTestForm";
 
 export default async function EditFlavorPage({
   params,
@@ -93,6 +94,11 @@ export default async function EditFlavorPage({
       />
 
       <FlavorCaptions flavorId={String(flavor.id)} flavorSlug={flavor.slug} />
+
+      <FlavorTestForm
+        flavorId={String(flavor.id)}
+        flavorSlug={flavor.slug ?? null}
+      />
     </main>
   );
 }

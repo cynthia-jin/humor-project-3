@@ -40,7 +40,8 @@ export default function FlavorStepsManager({
   );
 
   const selectedStep = useMemo(
-    () => steps.find((s) => s.id === selectedStepId) ?? null,
+    () =>
+      steps.find((s) => s.id === selectedStepId) ?? steps?.[0] ?? null,
     [selectedStepId, steps]
   );
 

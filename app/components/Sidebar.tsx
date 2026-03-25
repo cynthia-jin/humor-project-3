@@ -35,18 +35,6 @@ export default function Sidebar({ userEmail }: { userEmail: string }) {
         >
           Flavor Steps (reorder)
         </Link>
-        <Link
-          href="/captions"
-          className="block rounded px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-white"
-        >
-          Captions by Flavor
-        </Link>
-        <Link
-          href="/test-flavor"
-          className="block rounded px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-white"
-        >
-          Test Flavor (AI)
-        </Link>
       </nav>
 
       <div className="p-4 border-t border-gray-200 dark:border-gray-800">

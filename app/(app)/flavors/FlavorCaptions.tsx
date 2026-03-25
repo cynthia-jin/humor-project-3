@@ -1,33 +1,69 @@
-import { requireSuperadmin } from "@/lib/auth";
+"use client";
 
-export default async function FlavorCaptions({
+import { useEffect, useMemo, useState } from "react";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+
+type CaptionsRow = {
+  id: string;
+  content: string | null;
+  is_public: boolean;
+  is_featured: boolean;
+  like_count: number;
+  profile_id: string;
+  image_id: string;
+  humor_flavor_id: string | number | null;
+  caption_request_id: string | number | null;
+  llm_prompt_chain_id: string | number | null;
+  created_datetime_utc: string;
+};
+
+export default function FlavorCaptions({
   flavorId,
   flavorSlug,
 }: {
   flavorId: string;
   flavorSlug: string | null;
 }) {
-  const { supabase } = await requireSuperadmin();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
-  const { data: captions, error } = await supabase
-    .from("captions")
-    .select(
-      "id, content, is_public, is_featured, like_count, profile_id, image_id, humor_flavor_id, caption_request_id, llm_prompt_chain_id, created_datetime_utc"
-    )
-    .eq("humor_flavor_id", flavorId)
-    .order("created_datetime_utc", { ascending: false })
-    .limit(200);
+  const [captions, setCaptions] = useState<CaptionsRow[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  if (error) {
-    return (
-      <section className="mt-10">
-        <h3 className="text-lg font-semibold mb-3">Captions</h3>
-        <div className="rounded border border-red-500 bg-red-50 p-4 text-red-700">
-          {error.message}
-        </div>
-      </section>
-    );
-  }
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      setError(null);
+
+      const { data, error: supaError } = await supabase
+        .from("captions")
+        .select(
+          "id, content, is_public, is_featured, like_count, profile_id, image_id, humor_flavor_id, caption_request_id, llm_prompt_chain_id, created_datetime_utc"
+        )
+        .eq("humor_flavor_id", flavorId)
+        .order("created_datetime_utc", { ascending: false })
+        .limit(200);
+
+      if (cancelled) return;
+
+      if (supaError) {
+        setError(supaError.message);
+        setCaptions([]);
+      } else {
+        setCaptions((data ?? []) as CaptionsRow[]);
+      }
+
+      setLoading(false);
+    }
+
+    void load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase, flavorId]);
 
   return (
     <section className="mt-10">
@@ -36,19 +72,31 @@ export default async function FlavorCaptions({
           Captions{flavorSlug ? ` for ${flavorSlug}` : ""}
         </h3>
         <div className="text-xs text-gray-500 dark:text-gray-400">
-          Total: {captions?.length ?? 0}
+          Total: {captions.length}
         </div>
       </div>
 
-      {(!captions || captions.length === 0) && (
+      {loading ? (
+        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6 text-sm text-gray-600 dark:text-gray-300">
+          Loading captions...
+        </div>
+      ) : null}
+
+      {error ? (
+        <div className="rounded border border-red-500 bg-red-50 p-4 text-red-700 text-sm">
+          {error}
+        </div>
+      ) : null}
+
+      {!loading && !error && captions.length === 0 ? (
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6">
           <div className="text-sm text-gray-600 dark:text-gray-300">
             No captions exist for this flavor yet.
           </div>
         </div>
-      )}
+      ) : null}
 
-      {captions && captions.length > 0 && (
+      {!loading && !error && captions.length > 0 ? (
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 overflow-hidden">
           <table className="min-w-full text-sm">
             <thead className="bg-gray-50 dark:bg-gray-900">
@@ -85,7 +133,7 @@ export default async function FlavorCaptions({
                     </div>
                   </td>
                   <td className="py-3 px-4 align-top text-gray-700 dark:text-gray-300">
-                    {c.like_count}
+                    {c.like_count ?? 0}
                   </td>
                   <td className="py-3 px-4 align-top text-gray-700 dark:text-gray-300">
                     {c.is_public ? "Yes" : "No"}
@@ -94,14 +142,15 @@ export default async function FlavorCaptions({
                     {c.is_featured ? "Yes" : "No"}
                   </td>
                   <td className="py-3 px-4 align-top text-gray-700 dark:text-gray-300">
-                    {c.created_datetime_utc}
+                    {c.created_datetime_utc ?? "—"}
                   </td>
                   <td className="py-3 px-4 align-top">
                     <div className="text-xs text-gray-500 dark:text-gray-400 break-all">
                       Image ID: {c.image_id ?? "—"}
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400 break-all">
-                      Prompt Chain ID: {c.llm_prompt_chain_id ?? "—"}
+                      Prompt Chain ID:{" "}
+                      {c.llm_prompt_chain_id ?? "—"}
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400 break-all">
                       Caption Request ID:{" "}
@@ -113,7 +162,7 @@ export default async function FlavorCaptions({
             </tbody>
           </table>
         </div>
-      )}
+      ) : null}
     </section>
   );
 }

@@ -209,7 +209,8 @@ export async function reorderFlavorStep(
 
   const minOrder = minRow?.order_by == null ? 0 : Number(minRow.order_by);
   const maxOrder = maxRow?.order_by == null ? 0 : Number(maxRow.order_by);
-  const tempOrderBy = direction === "up" ? minOrder - 100000 : maxOrder + 100000;
+  // Use a value well outside the current min/max range to avoid collisions.
+  const tempOrderBy = direction === "up" ? minOrder - 1000000 : maxOrder + 1000000;
 
   // 1) Move current to temp
   const { error: t1 } = await supabase
