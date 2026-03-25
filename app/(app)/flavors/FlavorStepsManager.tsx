@@ -34,14 +34,14 @@ export default function FlavorStepsManager({
   steps: FlavorStepRow[];
 }) {
   const router = useRouter();
-
-  const [selectedStepId, setSelectedStepId] = useState<string | null>(
-    steps?.[0]?.id ?? null
+  const [editorMode, setEditorMode] = useState<"closed" | "create" | "edit">(
+    "closed"
   );
 
+  const [selectedStepId, setSelectedStepId] = useState<string | null>(null);
+
   const selectedStep = useMemo(
-    () =>
-      steps.find((s) => s.id === selectedStepId) ?? steps?.[0] ?? null,
+    () => steps.find((s) => s.id === selectedStepId) ?? null,
     [selectedStepId, steps]
   );
 
@@ -75,7 +75,9 @@ export default function FlavorStepsManager({
       updateState.ok ||
       deleteState.ok ||
       reorderState.ok;
-    if (ok) router.refresh();
+    if (ok) {
+      router.refresh();
+    }
   }, [createState.ok, updateState.ok, deleteState.ok, reorderState.ok, router]);
 
   const firstStepId = steps[0]?.id ?? null;
@@ -83,10 +85,25 @@ export default function FlavorStepsManager({
 
   return (
     <section className="mt-8">
-      <div className="mb-4 flex items-baseline justify-between gap-3">
-        <h2 className="text-xl font-semibold">Flavor Steps</h2>
-        <div className="text-xs text-gray-500 dark:text-gray-400">
-          Total: {steps.length}
+      <div className="mb-4 flex items-end justify-between gap-3">
+        <div>
+          <h2 className="text-xl font-semibold">Flavor steps</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            Reorder and manage the prompt-chain steps for this flavor.
+          </p>
+        </div>
+        <div className="text-xs text-gray-500 dark:text-gray-400 text-right">
+          <div>Total: {steps.length}</div>
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedStepId(null);
+              setEditorMode("create");
+            }}
+            className="mt-2 rounded border border-gray-200 dark:border-gray-800 px-3 py-1 text-xs text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
+          >
+            Add step
+          </button>
         </div>
       </div>
 
@@ -96,9 +113,9 @@ export default function FlavorStepsManager({
         </div>
       ) : null}
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-3 space-y-4">
-          <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 overflow-hidden">
+      <div className="space-y-6">
+        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 overflow-hidden">
+          <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
@@ -161,7 +178,10 @@ export default function FlavorStepsManager({
                           </form>
                           <button
                             type="button"
-                            onClick={() => setSelectedStepId(s.id)}
+                            onClick={() => {
+                              setSelectedStepId(s.id);
+                              setEditorMode("edit");
+                            }}
                             className="rounded border border-gray-200 dark:border-gray-800 px-2 py-1 text-xs text-gray-800 dark:text-gray-200"
                           >
                             Edit
@@ -200,117 +220,149 @@ export default function FlavorStepsManager({
           </div>
         </div>
 
-        <div className="lg:col-span-2 space-y-4">
-          <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6">
-            <h3 className="text-lg font-semibold mb-4">Add Step</h3>
-
-            <form action={createAction} className="space-y-4">
-              <input type="hidden" name="humor_flavor_id" value={flavorId} />
-
-              <div>
-                <label className="block mb-1 font-medium">description</label>
-                <textarea
-                  name="description"
-                  rows={2}
-                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
-                  placeholder="Optional description"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">
-                  llm_input_type_id
-                </label>
-                <input
-                  name="llm_input_type_id"
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
-                  placeholder="e.g. 1"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">
-                  llm_output_type_id
-                </label>
-                <input
-                  name="llm_output_type_id"
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
-                  placeholder="e.g. 1"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">llm_model_id</label>
-                <input
-                  name="llm_model_id"
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
-                  placeholder="e.g. 1"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">
-                  humor_flavor_step_type_id
-                </label>
-                <input
-                  name="humor_flavor_step_type_id"
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
-                  placeholder="e.g. 1"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">
-                  llm_temperature
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  name="llm_temperature"
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
-                  placeholder="e.g. 0.7"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">
-                  llm_system_prompt
-                </label>
-                <textarea
-                  name="llm_system_prompt"
-                  rows={3}
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">
-                  llm_user_prompt
-                </label>
-                <textarea
-                  name="llm_user_prompt"
-                  rows={3}
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="rounded bg-slate-900 px-4 py-2 text-white dark:bg-slate-100 dark:text-slate-900"
-              >
-                Add Step
-              </button>
-            </form>
+        <div>
+          <div className="mb-2">
+            <h3 className="text-lg font-semibold">Step editor</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Only shown while adding or editing a step.
+            </p>
           </div>
 
-          <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6">
-            <h3 className="text-lg font-semibold mb-4">Edit Step</h3>
-
-            {!selectedStep ? (
-              <div className="text-sm text-gray-600 dark:text-gray-300">
-                Select a step to edit.
+          {editorMode === "closed" ? (
+            <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-4 text-sm text-gray-600 dark:text-gray-300">
+              Click <span className="font-medium">Add step</span> or use{" "}
+              <span className="font-medium">Edit</span> on a row to open the
+              editor.
+            </div>
+          ) : editorMode === "create" ? (
+            <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <h4 className="text-base font-semibold">Add step</h4>
+                <button
+                  type="button"
+                  onClick={() => setEditorMode("closed")}
+                  className="rounded border border-gray-200 dark:border-gray-800 px-3 py-1 text-xs text-gray-800 dark:text-gray-200"
+                >
+                  Close editor
+                </button>
               </div>
-            ) : (
+
+              <form action={createAction} className="space-y-4">
+                <input type="hidden" name="humor_flavor_id" value={flavorId} />
+
+                <div>
+                  <label className="block mb-1 font-medium">description</label>
+                  <textarea
+                    name="description"
+                    rows={2}
+                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                    placeholder="Optional description"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block mb-1 font-medium">
+                      llm_input_type_id
+                    </label>
+                    <input
+                      name="llm_input_type_id"
+                      className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                      placeholder="e.g. 1"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-medium">
+                      llm_output_type_id
+                    </label>
+                    <input
+                      name="llm_output_type_id"
+                      className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                      placeholder="e.g. 1"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-medium">llm_model_id</label>
+                    <input
+                      name="llm_model_id"
+                      className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                      placeholder="e.g. 1"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-medium">
+                      humor_flavor_step_type_id
+                    </label>
+                    <input
+                      name="humor_flavor_step_type_id"
+                      className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                      placeholder="e.g. 1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-medium">llm_temperature</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="llm_temperature"
+                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                    placeholder="e.g. 0.7"
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-medium">
+                    llm_system_prompt
+                  </label>
+                  <textarea
+                    name="llm_system_prompt"
+                    rows={3}
+                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-medium">llm_user_prompt</label>
+                  <textarea
+                    name="llm_user_prompt"
+                    rows={3}
+                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="rounded bg-slate-900 px-4 py-2 text-white dark:bg-slate-100 dark:text-slate-900"
+                >
+                  Add step
+                </button>
+              </form>
+            </div>
+          ) : !selectedStep ? (
+            <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-4 text-sm text-gray-600 dark:text-gray-300">
+              Select a step to edit.
+            </div>
+          ) : (
+            <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <h4 className="text-base font-semibold">Edit step</h4>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditorMode("closed");
+                    setSelectedStepId(null);
+                  }}
+                  className="rounded border border-gray-200 dark:border-gray-800 px-3 py-1 text-xs text-gray-800 dark:text-gray-200"
+                >
+                  Close editor
+                </button>
+              </div>
+
               <form
                 key={selectedStep.id}
                 action={updateAction}
@@ -319,7 +371,8 @@ export default function FlavorStepsManager({
                 <input type="hidden" name="id" value={selectedStep.id} />
 
                 <div className="rounded border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 p-3 text-xs text-gray-600 dark:text-gray-300">
-                  Editing step: <span className="font-mono">{selectedStep.id}</span>
+                  Editing step:{" "}
+                  <span className="font-mono break-all">{selectedStep.id}</span>
                   <div>
                     order_by:{" "}
                     <span className="font-mono">{selectedStep.order_by}</span>
@@ -336,59 +389,57 @@ export default function FlavorStepsManager({
                   />
                 </div>
 
-                <div>
-                  <label className="block mb-1 font-medium">
-                    llm_input_type_id
-                  </label>
-                  <input
-                    name="llm_input_type_id"
-                    defaultValue={selectedStep.llm_input_type_id ?? ""}
-                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block mb-1 font-medium">
+                      llm_input_type_id
+                    </label>
+                    <input
+                      name="llm_input_type_id"
+                      defaultValue={selectedStep.llm_input_type_id ?? ""}
+                      className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-medium">
+                      llm_output_type_id
+                    </label>
+                    <input
+                      name="llm_output_type_id"
+                      defaultValue={selectedStep.llm_output_type_id ?? ""}
+                      className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-medium">llm_model_id</label>
+                    <input
+                      name="llm_model_id"
+                      defaultValue={selectedStep.llm_model_id ?? ""}
+                      className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-medium">
+                      humor_flavor_step_type_id
+                    </label>
+                    <input
+                      name="humor_flavor_step_type_id"
+                      defaultValue={selectedStep.humor_flavor_step_type_id ?? ""}
+                      className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block mb-1 font-medium">
-                    llm_output_type_id
-                  </label>
-                  <input
-                    name="llm_output_type_id"
-                    defaultValue={selectedStep.llm_output_type_id ?? ""}
-                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-1 font-medium">llm_model_id</label>
-                  <input
-                    name="llm_model_id"
-                    defaultValue={selectedStep.llm_model_id ?? ""}
-                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-1 font-medium">
-                    humor_flavor_step_type_id
-                  </label>
-                  <input
-                    name="humor_flavor_step_type_id"
-                    defaultValue={selectedStep.humor_flavor_step_type_id ?? ""}
-                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-1 font-medium">
-                    llm_temperature
-                  </label>
+                  <label className="block mb-1 font-medium">llm_temperature</label>
                   <input
                     type="number"
                     step="0.01"
                     name="llm_temperature"
-                    defaultValue={
-                      selectedStep.llm_temperature ?? ""
-                    }
+                    defaultValue={selectedStep.llm_temperature ?? ""}
                     className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   />
                 </div>
@@ -406,9 +457,7 @@ export default function FlavorStepsManager({
                 </div>
 
                 <div>
-                  <label className="block mb-1 font-medium">
-                    llm_user_prompt
-                  </label>
+                  <label className="block mb-1 font-medium">llm_user_prompt</label>
                   <textarea
                     name="llm_user_prompt"
                     rows={3}
@@ -421,11 +470,11 @@ export default function FlavorStepsManager({
                   type="submit"
                   className="rounded bg-slate-900 px-4 py-2 text-white dark:bg-slate-100 dark:text-slate-900"
                 >
-                  Save Changes
+                  Save changes
                 </button>
               </form>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </section>

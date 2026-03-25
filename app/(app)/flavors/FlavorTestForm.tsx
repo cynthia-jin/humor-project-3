@@ -240,7 +240,7 @@ export default function FlavorTestForm({
         ) : null}
       </div>
 
-      <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6">
+      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-6">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <label className="flex items-center gap-2 text-sm">
@@ -273,6 +273,7 @@ export default function FlavorTestForm({
                   type="file"
                   accept="image/*"
                   disabled={loading}
+                  className="block w-full text-sm text-slate-900 dark:text-slate-100 file:mr-3 file:rounded file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-slate-900 dark:file:bg-slate-800 dark:file:text-slate-100"
                   onChange={(e) => {
                     const f = e.target.files?.[0] ?? null;
                     setFile(f);
@@ -302,7 +303,7 @@ export default function FlavorTestForm({
                   </div>
                 ) : (
                   <select
-                    className="w-full rounded border border-gray-200 bg-white text-sm px-3 py-2 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-100"
+                    className="w-full rounded border border-slate-200 bg-white text-slate-900 text-sm px-3 py-2 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100"
                     value={selectedTestImageId}
                     disabled={loading || testImages.length === 0}
                     onChange={(e) => setSelectedTestImageId(e.target.value)}
@@ -346,73 +347,75 @@ export default function FlavorTestForm({
         </div>
 
         {!loading && captions.length === 0 && !error && !hasRun ? (
-          <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6 text-sm text-gray-600 dark:text-gray-300">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-6 text-sm text-slate-600 dark:text-slate-300">
             Upload an image and generate captions to see results here.
           </div>
         ) : null}
 
         {!loading && captions.length === 0 && !error && hasRun ? (
-          <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6 text-sm text-gray-600 dark:text-gray-300">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-6 text-sm text-slate-600 dark:text-slate-300">
             No captions were returned for this run.
           </div>
         ) : null}
 
         {captions.length > 0 && (
-          <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 overflow-hidden">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 overflow-hidden">
+            <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+              <thead className="bg-slate-50 dark:bg-slate-900">
                 <tr>
-                  <th className="text-left font-medium py-3 px-4 text-gray-700 dark:text-gray-200">
+                  <th className="text-left font-medium py-3 px-4 text-slate-700 dark:text-slate-200">
                     Caption
                   </th>
-                  <th className="text-left font-medium py-3 px-4 text-gray-700 dark:text-gray-200 w-20">
+                  <th className="text-left font-medium py-3 px-4 text-slate-700 dark:text-slate-200 w-20">
                     Likes
                   </th>
-                  <th className="text-left font-medium py-3 px-4 text-gray-700 dark:text-gray-200 w-24">
+                  <th className="text-left font-medium py-3 px-4 text-slate-700 dark:text-slate-200 w-24">
                     Public
                   </th>
-                  <th className="text-left font-medium py-3 px-4 text-gray-700 dark:text-gray-200 w-26">
+                  <th className="text-left font-medium py-3 px-4 text-slate-700 dark:text-slate-200 w-26">
                     Featured
                   </th>
-                  <th className="text-left font-medium py-3 px-4 text-gray-700 dark:text-gray-200 w-32">
+                  <th className="text-left font-medium py-3 px-4 text-slate-700 dark:text-slate-200 w-32">
                     Created
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                 {captions.map((c, idx) => (
                   <tr key={c.id ? String(c.id) : String(idx)}>
                     <td className="py-3 px-4 align-top">
                       <div className="break-words">
                         {c.content ?? "—"}
                       </div>
-                      <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 break-all">
+                      <div className="mt-2 text-xs text-slate-500 dark:text-slate-400 break-all">
                         Caption ID: {c.id ?? "—"} · Image ID:{" "}
                         {c.image_id ?? "—"} · Flavor ID:{" "}
                         {c.humor_flavor_id ?? "—"}
                       </div>
-                      <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 break-all">
+                      <div className="mt-1 text-xs text-slate-500 dark:text-slate-400 break-all">
                         Caption Request:{" "}
                         {c.caption_request_id ?? "—"} · Chain:{" "}
                         {c.llm_prompt_chain_id ?? "—"}
                       </div>
                     </td>
-                    <td className="py-3 px-4 align-top text-gray-700 dark:text-gray-300">
+                    <td className="py-3 px-4 align-top text-slate-700 dark:text-slate-300">
                       {c.like_count ?? "0"}
                     </td>
-                    <td className="py-3 px-4 align-top text-gray-700 dark:text-gray-300">
+                    <td className="py-3 px-4 align-top text-slate-700 dark:text-slate-300">
                       {c.is_public ? "Yes" : "No"}
                     </td>
-                    <td className="py-3 px-4 align-top text-gray-700 dark:text-gray-300">
+                    <td className="py-3 px-4 align-top text-slate-700 dark:text-slate-300">
                       {c.is_featured ? "Yes" : "No"}
                     </td>
-                    <td className="py-3 px-4 align-top text-gray-700 dark:text-gray-300">
+                    <td className="py-3 px-4 align-top text-slate-700 dark:text-slate-300">
                       {c.created_datetime_utc ?? "—"}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </div>

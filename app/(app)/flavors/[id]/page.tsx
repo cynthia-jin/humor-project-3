@@ -30,7 +30,7 @@ export default async function EditFlavorPage({
 
   if (error) {
     return (
-      <main className="p-6 max-w-2xl">
+      <main className="p-6 max-w-4xl">
         <div className="mb-4">
           <Link href="/flavors" className="underline text-sm">
             Back to flavors
@@ -56,14 +56,14 @@ export default async function EditFlavorPage({
 
   if (stepsError) {
     return (
-      <main className="p-6 max-w-2xl">
+      <main className="p-6 max-w-4xl">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div>
             <Link href="/flavors" className="underline text-sm">
               Back to flavors
             </Link>
           </div>
-          <div className="text-xs text-gray-500 dark:text-gray-400">
+          <div className="text-xs text-slate-500 dark:text-slate-400">
             Editing ID: {String(flavor.id)}
           </div>
         </div>
@@ -77,38 +77,60 @@ export default async function EditFlavorPage({
   const flavorSteps = (steps ?? []) as FlavorStepRow[];
 
   return (
-    <main className="p-6 max-w-2xl">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <div>
+    <main className="p-6 max-w-6xl min-w-0">
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div className="min-w-0">
           <Link href="/flavors" className="underline text-sm">
-            Back to flavors
+            Back to humor flavors
           </Link>
+          <h1 className="mt-2 text-2xl font-bold text-slate-900 dark:text-slate-100">
+            {flavor.slug ?? "Untitled flavor"}
+          </h1>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+            Manage flavor details, prompt-chain steps, testing, and generated
+            caption history.
+          </p>
         </div>
-        <div className="text-xs text-gray-500 dark:text-gray-400">
-          Editing ID: {String(flavor.id)}
+        <div className="text-xs text-slate-500 dark:text-slate-400">
+          Flavor ID: {String(flavor.id)}
         </div>
       </div>
 
-      <FlavorEditForm
-        id={String(flavorIdNum)}
-        slug={flavor.slug ?? null}
-        description={flavor.description ?? null}
-      />
+      <section className="mb-10">
+        <div className="mb-3">
+          <h2 className="text-lg font-semibold">Flavor details</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            Update the flavor identity and description. Delete remains in the
+            danger zone below.
+          </p>
+        </div>
+        <FlavorEditForm
+          id={String(flavorIdNum)}
+          slug={flavor.slug ?? null}
+          description={flavor.description ?? null}
+        />
+      </section>
 
-      <FlavorStepsManager
-        flavorId={String(flavorIdNum)}
-        steps={flavorSteps}
-      />
+      <section className="mb-10">
+        <FlavorStepsManager
+          flavorId={String(flavorIdNum)}
+          steps={flavorSteps}
+        />
+      </section>
 
-      <FlavorTestForm
-        flavorId={String(flavorIdNum)}
-        flavorSlug={flavor.slug ?? null}
-      />
+      <section className="mb-10">
+        <FlavorTestForm
+          flavorId={String(flavorIdNum)}
+          flavorSlug={flavor.slug ?? null}
+        />
+      </section>
 
-      <FlavorCaptions
-        flavorId={String(flavorIdNum)}
-        flavorSlug={flavor.slug}
-      />
+      <section className="min-w-0">
+        <FlavorCaptions
+          flavorId={String(flavorIdNum)}
+          flavorSlug={flavor.slug}
+        />
+      </section>
     </main>
   );
 }
