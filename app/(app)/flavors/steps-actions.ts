@@ -56,13 +56,47 @@ function parseOptionalBigint(
   return raw;
 }
 
+function parseRequiredBigint(
+  value: FormDataEntryValue | null,
+  fieldName: string
+): string {
+  const parsed = parseOptionalBigint(value);
+  if (!parsed) {
+    throw new Error(`${fieldName} is required.`);
+  }
+  return parsed;
+}
+
+function normalizeDbBigint(value: unknown): string | null {
+  if (value === null || value === undefined) return null;
+  const raw = String(value).trim();
+  if (!raw) return null;
+  if (raw === "undefined" || raw === "null") return null;
+
+  // Strip surrounding quotes if the DB returned them as text.
+  const first = raw[0];
+  const last = raw[raw.length - 1];
+  if ((first === '"' && last === '"') || (first === "'" && last === "'")) {
+    return raw.slice(1, -1).trim() || null;
+  }
+  return raw;
+}
+
 export async function createFlavorStep(
   _prevState: StepActionState,
   formData: FormData
 ): Promise<StepActionState> {
   const { supabase } = await requireSuperadmin();
 
-  const humorFlavorId = String(formData.get("humor_flavor_id") ?? "");
+  const humorFlavorId = (() => {
+    const raw = formData.get("humor_flavor_id");
+    try {
+      return parseRequiredBigint(raw, "humor_flavor_id");
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      throw new Error(msg);
+    }
+  })();
   const description = String(formData.get("description") ?? "");
 
   const llmInputTypeId = parseOptionalBigint(
@@ -83,8 +117,6 @@ export async function createFlavorStep(
 
   const llmSystemPrompt = String(formData.get("llm_system_prompt") ?? "");
   const llmUserPrompt = String(formData.get("llm_user_prompt") ?? "");
-
-  if (!humorFlavorId) return { error: "Missing humor_flavor_id." };
 
   // Assign the next order_by value at the end of the list.
   const { data: maxRow, error: maxError } = await supabase
@@ -210,12 +242,16 @@ export async function reorderFlavorStep(
   if (!current) return { error: "Step not found." };
 
   const currentOrder = Number(current.order_by);
+  const currentHumorFlavorId = normalizeDbBigint(current.humor_flavor_id);
+  if (!currentHumorFlavorId) {
+    return { error: "Missing humor_flavor_id for reorder." };
+  }
   const adjacentQuery =
     direction === "up"
       ? supabase
           .from("humor_flavor_steps")
           .select("id, order_by")
-          .eq("humor_flavor_id", current.humor_flavor_id)
+          .eq("humor_flavor_id", currentHumorFlavorId)
           .lt("order_by", currentOrder)
           .order("order_by", { ascending: false })
           .limit(1)
@@ -223,7 +259,7 @@ export async function reorderFlavorStep(
       : supabase
           .from("humor_flavor_steps")
           .select("id, order_by")
-          .eq("humor_flavor_id", current.humor_flavor_id)
+          .eq("humor_flavor_id", currentHumorFlavorId)
           .gt("order_by", currentOrder)
           .order("order_by", { ascending: true })
           .limit(1)
@@ -242,7 +278,7 @@ export async function reorderFlavorStep(
   const { data: minRow, error: minError } = await supabase
     .from("humor_flavor_steps")
     .select("order_by")
-    .eq("humor_flavor_id", current.humor_flavor_id)
+    .eq("humor_flavor_id", currentHumorFlavorId)
     .order("order_by", { ascending: true })
     .limit(1)
     .maybeSingle();
@@ -251,7 +287,7 @@ export async function reorderFlavorStep(
   const { data: maxRow, error: maxError } = await supabase
     .from("humor_flavor_steps")
     .select("order_by")
-    .eq("humor_flavor_id", current.humor_flavor_id)
+    .eq("humor_flavor_id", currentHumorFlavorId)
     .order("order_by", { ascending: false })
     .limit(1)
     .maybeSingle();

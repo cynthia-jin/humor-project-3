@@ -15,7 +15,7 @@ export default function Sidebar({ userEmail }: { userEmail: string }) {
 
       <nav className="flex-1 overflow-y-auto p-4 space-y-1">
         <Link
-          href="/"
+          href="/dashboard"
           className="block rounded px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-white"
         >
           Dashboard
@@ -28,12 +28,6 @@ export default function Sidebar({ userEmail }: { userEmail: string }) {
           className="block rounded px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-white"
         >
           Humor Flavors
-        </Link>
-        <Link
-          href="/flavor-steps"
-          className="block rounded px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-white"
-        >
-          Flavor Steps (reorder)
         </Link>
       </nav>
 

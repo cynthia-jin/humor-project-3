@@ -93,12 +93,12 @@ export default async function EditFlavorPage({
         steps={flavorSteps}
       />
 
-      <FlavorCaptions flavorId={String(flavor.id)} flavorSlug={flavor.slug} />
-
       <FlavorTestForm
         flavorId={String(flavor.id)}
         flavorSlug={flavor.slug ?? null}
       />
+
+      <FlavorCaptions flavorId={String(flavor.id)} flavorSlug={flavor.slug} />
     </main>
   );
 }
