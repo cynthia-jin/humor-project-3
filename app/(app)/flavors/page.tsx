@@ -1,0 +1,112 @@
+import Link from "next/link";
+import { requireSuperadmin } from "@/lib/auth";
+
+export default async function FlavorsPage() {
+  const { supabase } = await requireSuperadmin();
+
+  const { data: flavors, error } = await supabase
+    .from("humor_flavors")
+    .select("id, slug, description, created_datetime_utc")
+    .order("created_datetime_utc", { ascending: false })
+    .limit(200);
+
+  if (error) {
+    return (
+      <main className="p-6 max-w-5xl">
+        <h1 className="text-2xl font-bold mb-4">Humor Flavors</h1>
+        <div className="rounded border border-red-500 bg-red-50 p-4 text-red-700">
+          {error.message}
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="p-6 max-w-5xl">
+      <div className="mb-6 flex items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold">Humor Flavors</h1>
+        <Link
+          href="/flavors/new"
+          className="rounded bg-black px-4 py-2 text-white dark:bg-white dark:text-black"
+        >
+          New Flavor
+        </Link>
+      </div>
+
+      {(!flavors || flavors.length === 0) && (
+        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6">
+          <div className="text-sm text-gray-600 dark:text-gray-300">
+            No humor flavors yet.
+          </div>
+          <div className="mt-4">
+            <Link
+              href="/flavors/new"
+              className="underline text-sm text-gray-900 dark:text-gray-100"
+            >
+              Create your first flavor
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {flavors && flavors.length > 0 && (
+        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 overflow-hidden">
+          <table className="min-w-full text-sm">
+            <thead className="bg-gray-50 dark:bg-gray-900">
+              <tr>
+                <th className="text-left font-medium py-3 px-4 text-gray-700 dark:text-gray-200">
+                  Slug
+                </th>
+                <th className="text-left font-medium py-3 px-4 text-gray-700 dark:text-gray-200">
+                  Description
+                </th>
+                <th className="text-left font-medium py-3 px-4 text-gray-700 dark:text-gray-200">
+                  Created (UTC)
+                </th>
+                <th className="text-right font-medium py-3 px-4 text-gray-700 dark:text-gray-200">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+              {flavors.map((f) => (
+                <tr key={String(f.id)}>
+                  <td className="py-3 px-4 align-top text-gray-900 dark:text-gray-100">
+                    <Link
+                      href={`/flavors/${String(f.id)}`}
+                      className="font-medium underline"
+                    >
+                      {f.slug}
+                    </Link>
+                    <div className="text-xs text-gray-500 mt-1 break-all">
+                      ID: {f.id}
+                    </div>
+                  </td>
+                  <td className="py-3 px-4 align-top text-gray-700 dark:text-gray-300">
+                    {f.description ? (
+                      <div className="max-w-xl">{f.description}</div>
+                    ) : (
+                      <span className="text-gray-500">-</span>
+                    )}
+                  </td>
+                  <td className="py-3 px-4 align-top text-gray-700 dark:text-gray-300">
+                    {f.created_datetime_utc}
+                  </td>
+                  <td className="py-3 px-4 align-top text-right">
+                    <Link
+                      href={`/flavors/${String(f.id)}`}
+                      className="inline-block rounded border border-gray-200 dark:border-gray-800 px-3 py-1 text-xs text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
+                    >
+                      Edit
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </main>
+  );
+}
+
