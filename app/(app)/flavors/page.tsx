@@ -27,7 +27,7 @@ export default async function FlavorsPage() {
         <h1 className="text-2xl font-bold">Humor Flavors</h1>
         <Link
           href="/flavors/new"
-          className="rounded bg-black px-4 py-2 text-white dark:bg-white dark:text-black"
+          className="rounded bg-slate-900 px-4 py-2 text-white dark:bg-slate-100 dark:text-slate-900"
         >
           New Flavor
         </Link>

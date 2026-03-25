@@ -41,7 +41,7 @@ export default function LoginPage() {
         <button
           onClick={signInWithGoogle}
           disabled={loading}
-          className="mt-6 w-full rounded bg-black px-4 py-2 text-white disabled:opacity-70"
+          className="mt-6 w-full rounded bg-slate-900 px-4 py-2 text-white dark:bg-slate-100 dark:text-slate-900 disabled:opacity-70"
         >
           {loading ? "Redirecting..." : "Continue with Google"}
         </button>

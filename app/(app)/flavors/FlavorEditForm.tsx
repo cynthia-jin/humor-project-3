@@ -51,7 +51,7 @@ export default function FlavorEditForm({
           <div className="flex items-center gap-3">
             <button
               type="submit"
-              className="rounded bg-black px-4 py-2 text-white dark:bg-white dark:text-black"
+              className="rounded bg-slate-900 px-4 py-2 text-white dark:bg-slate-100 dark:text-slate-900"
             >
               Save
             </button>
