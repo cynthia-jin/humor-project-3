@@ -212,7 +212,7 @@ export default function FlavorStepsManager({
                 <textarea
                   name="description"
                   rows={2}
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   placeholder="Optional description"
                 />
               </div>
@@ -223,7 +223,7 @@ export default function FlavorStepsManager({
                 </label>
                 <input
                   name="llm_input_type_id"
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   placeholder="e.g. 1"
                 />
               </div>
@@ -234,7 +234,7 @@ export default function FlavorStepsManager({
                 </label>
                 <input
                   name="llm_output_type_id"
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   placeholder="e.g. 1"
                 />
               </div>
@@ -243,7 +243,7 @@ export default function FlavorStepsManager({
                 <label className="block mb-1 font-medium">llm_model_id</label>
                 <input
                   name="llm_model_id"
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   placeholder="e.g. 1"
                 />
               </div>
@@ -254,7 +254,7 @@ export default function FlavorStepsManager({
                 </label>
                 <input
                   name="humor_flavor_step_type_id"
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   placeholder="e.g. 1"
                 />
               </div>
@@ -267,7 +267,7 @@ export default function FlavorStepsManager({
                   type="number"
                   step="0.01"
                   name="llm_temperature"
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   placeholder="e.g. 0.7"
                 />
               </div>
@@ -279,7 +279,7 @@ export default function FlavorStepsManager({
                 <textarea
                   name="llm_system_prompt"
                   rows={3}
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                 />
               </div>
 
@@ -290,7 +290,7 @@ export default function FlavorStepsManager({
                 <textarea
                   name="llm_user_prompt"
                   rows={3}
-                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                  className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                 />
               </div>
 
@@ -332,7 +332,7 @@ export default function FlavorStepsManager({
                     name="description"
                     rows={2}
                     defaultValue={selectedStep.description ?? ""}
-                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   />
                 </div>
 
@@ -343,7 +343,7 @@ export default function FlavorStepsManager({
                   <input
                     name="llm_input_type_id"
                     defaultValue={selectedStep.llm_input_type_id ?? ""}
-                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   />
                 </div>
 
@@ -354,7 +354,7 @@ export default function FlavorStepsManager({
                   <input
                     name="llm_output_type_id"
                     defaultValue={selectedStep.llm_output_type_id ?? ""}
-                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   />
                 </div>
 
@@ -363,7 +363,7 @@ export default function FlavorStepsManager({
                   <input
                     name="llm_model_id"
                     defaultValue={selectedStep.llm_model_id ?? ""}
-                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   />
                 </div>
 
@@ -374,7 +374,7 @@ export default function FlavorStepsManager({
                   <input
                     name="humor_flavor_step_type_id"
                     defaultValue={selectedStep.humor_flavor_step_type_id ?? ""}
-                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   />
                 </div>
 
@@ -389,7 +389,7 @@ export default function FlavorStepsManager({
                     defaultValue={
                       selectedStep.llm_temperature ?? ""
                     }
-                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   />
                 </div>
 
@@ -401,7 +401,7 @@ export default function FlavorStepsManager({
                     name="llm_system_prompt"
                     rows={3}
                     defaultValue={selectedStep.llm_system_prompt ?? ""}
-                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   />
                 </div>
 
@@ -413,7 +413,7 @@ export default function FlavorStepsManager({
                     name="llm_user_prompt"
                     rows={3}
                     defaultValue={selectedStep.llm_user_prompt ?? ""}
-                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+                    className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                   />
                 </div>
 

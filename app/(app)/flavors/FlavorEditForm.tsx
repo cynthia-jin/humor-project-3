@@ -28,7 +28,7 @@ export default function FlavorEditForm({
             <input
               name="slug"
               defaultValue={slug ?? ""}
-              className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+              className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
             />
           </div>
 
@@ -38,7 +38,7 @@ export default function FlavorEditForm({
               name="description"
               rows={4}
               defaultValue={description ?? ""}
-              className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+              className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
             />
           </div>
 
@@ -60,7 +60,7 @@ export default function FlavorEditForm({
               onClick={() => {
                 window.location.href = `/flavors/${id}`;
               }}
-              className="rounded border border-gray-200 dark:border-gray-800 px-4 py-2 text-sm"
+              className="rounded border border-gray-200 dark:border-gray-800 px-4 py-2 text-sm text-gray-900 dark:text-gray-100"
             >
               Reset
             </button>

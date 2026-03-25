@@ -38,11 +38,18 @@ export async function updateFlavor(
 ): Promise<FlavorActionState> {
   const { supabase } = await requireSuperadmin();
 
-  const id = String(formData.get("id") ?? "");
+  const rawId = formData.get("id");
+  const idStr = rawId == null ? "" : rawId.toString().trim();
+  const normalizedIdStr =
+    idStr === '"undefined"' || idStr === "'undefined'" || idStr === "undefined"
+      ? ""
+      : idStr;
+  const idNum = Number(normalizedIdStr);
+  if (!Number.isFinite(idNum) || !Number.isSafeInteger(idNum)) {
+    return { error: "Invalid id." };
+  }
   const slug = String(formData.get("slug") ?? "");
   const description = String(formData.get("description") ?? "");
-
-  if (!id) return { error: "Missing id." };
 
   const payload = {
     slug,
@@ -52,13 +59,13 @@ export async function updateFlavor(
   const { error } = await supabase
     .from("humor_flavors")
     .update(payload)
-    .eq("id", id);
+    .eq("id", idNum);
 
   if (error) {
     return { error: error.message };
   }
 
-  redirect(`/flavors/${id}`);
+  redirect(`/flavors/${idNum}`);
 }
 
 export async function deleteFlavor(
@@ -67,10 +74,21 @@ export async function deleteFlavor(
 ): Promise<FlavorActionState> {
   const { supabase } = await requireSuperadmin();
 
-  const id = String(formData.get("id") ?? "");
-  if (!id) return { error: "Missing id." };
+  const rawId = formData.get("id");
+  const idStr = rawId == null ? "" : rawId.toString().trim();
+  const normalizedIdStr =
+    idStr === '"undefined"' || idStr === "'undefined'" || idStr === "undefined"
+      ? ""
+      : idStr;
+  const idNum = Number(normalizedIdStr);
+  if (!Number.isFinite(idNum) || !Number.isSafeInteger(idNum)) {
+    return { error: "Invalid id." };
+  }
 
-  const { error } = await supabase.from("humor_flavors").delete().eq("id", id);
+  const { error } = await supabase
+    .from("humor_flavors")
+    .delete()
+    .eq("id", idNum);
   if (error) {
     return { error: error.message };
   }

@@ -16,7 +16,7 @@ export default function FlavorCreateForm() {
           <input
             name="slug"
             placeholder="e.g. roast"
-            className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+            className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
           />
         </div>
 
@@ -26,7 +26,7 @@ export default function FlavorCreateForm() {
             name="description"
             rows={4}
             placeholder="What this flavor produces..."
-            className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
+            className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
           />
         </div>
 

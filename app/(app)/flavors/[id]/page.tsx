@@ -11,14 +11,21 @@ import FlavorTestForm from "@/app/(app)/flavors/FlavorTestForm";
 export default async function EditFlavorPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const { supabase } = await requireSuperadmin();
+  const { id } = await params;
+
+  // Parse + validate so we never send `undefined` into bigint filters.
+  const flavorIdNum = Number(id);
+  if (!Number.isFinite(flavorIdNum) || !Number.isSafeInteger(flavorIdNum)) {
+    return notFound();
+  }
 
   const { data: flavor, error } = await supabase
     .from("humor_flavors")
     .select("id, slug, description")
-    .eq("id", params.id)
+    .eq("id", flavorIdNum)
     .single();
 
   if (error) {
@@ -43,7 +50,7 @@ export default async function EditFlavorPage({
     .select(
       "id, humor_flavor_id, order_by, llm_input_type_id, llm_output_type_id, llm_model_id, humor_flavor_step_type_id, llm_temperature, description, llm_system_prompt, llm_user_prompt, created_datetime_utc"
     )
-    .eq("humor_flavor_id", params.id)
+    .eq("humor_flavor_id", flavorIdNum)
     .order("order_by", { ascending: true })
     .limit(200);
 
@@ -83,22 +90,25 @@ export default async function EditFlavorPage({
       </div>
 
       <FlavorEditForm
-        id={String(flavor.id)}
+        id={String(flavorIdNum)}
         slug={flavor.slug ?? null}
         description={flavor.description ?? null}
       />
 
       <FlavorStepsManager
-        flavorId={String(flavor.id)}
+        flavorId={String(flavorIdNum)}
         steps={flavorSteps}
       />
 
       <FlavorTestForm
-        flavorId={String(flavor.id)}
+        flavorId={String(flavorIdNum)}
         flavorSlug={flavor.slug ?? null}
       />
 
-      <FlavorCaptions flavorId={String(flavor.id)} flavorSlug={flavor.slug} />
+      <FlavorCaptions
+        flavorId={String(flavorIdNum)}
+        flavorSlug={flavor.slug}
+      />
     </main>
   );
 }
