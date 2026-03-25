@@ -15,8 +15,17 @@ type CaptionsRow = {
   caption_request_id: string | number | null;
   llm_prompt_chain_id: string | number | null;
   created_datetime_utc: string;
-  images?: Array<{ url: string | null }> | null;
+  image?: { url: string | null } | Array<{ url: string | null }> | null;
 };
+
+function getCaptionImageUrl(row: CaptionsRow): string | null {
+  const image = row.image;
+  if (!image) return null;
+  if (Array.isArray(image)) {
+    return image[0]?.url ?? null;
+  }
+  return image.url ?? null;
+}
 
 export default function FlavorCaptions({
   flavorId,
@@ -41,7 +50,7 @@ export default function FlavorCaptions({
       const { data, error: supaError } = await supabase
         .from("captions")
         .select(
-          "id, content, is_public, is_featured, like_count, profile_id, image_id, humor_flavor_id, caption_request_id, llm_prompt_chain_id, created_datetime_utc, images(url)"
+          "id, content, is_public, is_featured, like_count, profile_id, image_id, humor_flavor_id, caption_request_id, llm_prompt_chain_id, created_datetime_utc, image:images!captions_image_id_fkey(url)"
         )
         .eq("humor_flavor_id", flavorId)
         .order("created_datetime_utc", { ascending: false })
@@ -106,9 +115,9 @@ export default function FlavorCaptions({
             >
               <div className="flex items-start gap-4 min-w-0">
                 <div className="w-16 h-16 shrink-0 rounded-md overflow-hidden border border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-900">
-                  {c.images?.[0]?.url ? (
+                  {getCaptionImageUrl(c) ? (
                     <img
-                      src={c.images[0].url}
+                      src={getCaptionImageUrl(c) ?? ""}
                       alt="Caption image"
                       className="h-full w-full object-cover"
                     />

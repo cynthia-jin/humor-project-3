@@ -38,11 +38,24 @@ export default function FlavorTestForm({
   const [testImagesLoading, setTestImagesLoading] = useState(false);
   const [testImagesError, setTestImagesError] = useState<string | null>(null);
   const [selectedTestImageId, setSelectedTestImageId] = useState<string>("");
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerSearch, setPickerSearch] = useState("");
   const [step, setStep] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [captions, setCaptions] = useState<CaptionLike[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasRun, setHasRun] = useState(false);
+
+  const selectedTestImage =
+    testImages.find((img) => img.id === selectedTestImageId) ?? null;
+  const normalizedSearch = pickerSearch.trim().toLowerCase();
+  const filteredTestImages = testImages.filter((img) =>
+    img.id.toLowerCase().includes(normalizedSearch)
+  );
+
+  function shortImageLabel(id: string) {
+    return id.length <= 12 ? id : `${id.slice(0, 8)}...${id.slice(-4)}`;
+  }
 
   async function getSupabaseAccessToken() {
     const supabase = createSupabaseBrowserClient();
@@ -302,18 +315,40 @@ export default function FlavorTestForm({
                     No test-set images found.
                   </div>
                 ) : (
-                  <select
-                    className="w-full rounded border border-slate-200 bg-white text-slate-900 text-sm px-3 py-2 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100"
-                    value={selectedTestImageId}
-                    disabled={loading || testImages.length === 0}
-                    onChange={(e) => setSelectedTestImageId(e.target.value)}
-                  >
-                    {testImages.map((img) => (
-                      <option key={img.id} value={img.id}>
-                        {img.id}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="space-y-3">
+                    {selectedTestImage ? (
+                      <div className="flex items-center gap-3 rounded border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-3">
+                        <div className="h-16 w-16 overflow-hidden rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+                          <img
+                            src={selectedTestImage.url}
+                            alt="Selected test image"
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                            Selected test image
+                          </div>
+                          <div className="text-xs text-slate-500 dark:text-slate-400 break-all">
+                            {shortImageLabel(selectedTestImage.id)}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-xs text-slate-500 dark:text-slate-400">
+                        No test image selected yet.
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => setPickerOpen(true)}
+                      disabled={loading}
+                      className="rounded border border-slate-200 dark:border-slate-800 px-3 py-2 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 disabled:opacity-50"
+                    >
+                      Choose test image
+                    </button>
+                  </div>
                 )}
               </>
             )}
@@ -340,6 +375,74 @@ export default function FlavorTestForm({
           ) : null}
         </div>
       </div>
+
+      {pickerOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-4xl rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-4 py-3">
+              <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                Choose test image
+              </h4>
+              <button
+                type="button"
+                onClick={() => setPickerOpen(false)}
+                className="rounded border border-slate-200 dark:border-slate-800 px-2 py-1 text-xs text-slate-700 dark:text-slate-300"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="p-4">
+              <input
+                value={pickerSearch}
+                onChange={(e) => setPickerSearch(e.target.value)}
+                placeholder="Search by image ID"
+                className="mb-4 w-full rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100"
+              />
+
+              <div className="max-h-[60vh] overflow-y-auto">
+                {filteredTestImages.length === 0 ? (
+                  <div className="text-sm text-slate-500 dark:text-slate-400">
+                    No images match your search.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    {filteredTestImages.map((img) => {
+                      const isSelected = img.id === selectedTestImageId;
+                      return (
+                        <button
+                          key={img.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedTestImageId(img.id);
+                            setPickerOpen(false);
+                          }}
+                          className={`rounded-lg border p-2 text-left ${
+                            isSelected
+                              ? "border-slate-900 dark:border-slate-100"
+                              : "border-slate-200 dark:border-slate-800"
+                          }`}
+                        >
+                          <div className="h-24 w-full overflow-hidden rounded border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
+                            <img
+                              src={img.url}
+                              alt={`Test image ${shortImageLabel(img.id)}`}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                          <div className="mt-2 text-xs text-slate-600 dark:text-slate-300">
+                            {shortImageLabel(img.id)}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <div className="mt-6">
         <div className="mb-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
