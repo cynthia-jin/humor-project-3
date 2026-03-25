@@ -10,8 +10,17 @@ export type StepActionState = {
 function parseNumber(value: FormDataEntryValue | null, fallback?: number) {
   const raw = value == null ? "" : value.toString().trim();
   if (raw === "") return fallback;
+  if (raw === "undefined" || raw === "null") return fallback;
   const num = Number(raw);
   return Number.isFinite(num) ? num : fallback;
+}
+
+function parseOptionalBigint(
+  value: FormDataEntryValue | null
+): string | null {
+  const raw = value == null ? "" : value.toString().trim();
+  if (raw === "" || raw === "undefined" || raw === "null") return null;
+  return raw;
 }
 
 export async function createFlavorStep(
@@ -23,11 +32,15 @@ export async function createFlavorStep(
   const humorFlavorId = String(formData.get("humor_flavor_id") ?? "");
   const description = String(formData.get("description") ?? "");
 
-  const llmInputTypeId = String(formData.get("llm_input_type_id") ?? "");
-  const llmOutputTypeId = String(formData.get("llm_output_type_id") ?? "");
-  const llmModelId = String(formData.get("llm_model_id") ?? "");
-  const humorFlavorStepTypeId = String(
-    formData.get("humor_flavor_step_type_id") ?? ""
+  const llmInputTypeId = parseOptionalBigint(
+    formData.get("llm_input_type_id")
+  );
+  const llmOutputTypeId = parseOptionalBigint(
+    formData.get("llm_output_type_id")
+  );
+  const llmModelId = parseOptionalBigint(formData.get("llm_model_id"));
+  const humorFlavorStepTypeId = parseOptionalBigint(
+    formData.get("humor_flavor_step_type_id")
   );
 
   const llmTemperature = parseNumber(
@@ -59,10 +72,10 @@ export async function createFlavorStep(
     humor_flavor_id: humorFlavorId,
     order_by,
     description: description || null,
-    llm_input_type_id: llmInputTypeId || null,
-    llm_output_type_id: llmOutputTypeId || null,
-    llm_model_id: llmModelId || null,
-    humor_flavor_step_type_id: humorFlavorStepTypeId || null,
+    llm_input_type_id: llmInputTypeId,
+    llm_output_type_id: llmOutputTypeId,
+    llm_model_id: llmModelId,
+    humor_flavor_step_type_id: humorFlavorStepTypeId,
     llm_temperature: llmTemperature ?? null,
     llm_system_prompt: llmSystemPrompt || null,
     llm_user_prompt: llmUserPrompt || null,
@@ -84,11 +97,15 @@ export async function updateFlavorStep(
   if (!id) return { error: "Missing id." };
 
   const description = String(formData.get("description") ?? "");
-  const llmInputTypeId = String(formData.get("llm_input_type_id") ?? "");
-  const llmOutputTypeId = String(formData.get("llm_output_type_id") ?? "");
-  const llmModelId = String(formData.get("llm_model_id") ?? "");
-  const humorFlavorStepTypeId = String(
-    formData.get("humor_flavor_step_type_id") ?? ""
+  const llmInputTypeId = parseOptionalBigint(
+    formData.get("llm_input_type_id")
+  );
+  const llmOutputTypeId = parseOptionalBigint(
+    formData.get("llm_output_type_id")
+  );
+  const llmModelId = parseOptionalBigint(formData.get("llm_model_id"));
+  const humorFlavorStepTypeId = parseOptionalBigint(
+    formData.get("humor_flavor_step_type_id")
   );
   const llmTemperature = parseNumber(
     formData.get("llm_temperature"),
@@ -99,10 +116,10 @@ export async function updateFlavorStep(
 
   const payload = {
     description: description || null,
-    llm_input_type_id: llmInputTypeId || null,
-    llm_output_type_id: llmOutputTypeId || null,
-    llm_model_id: llmModelId || null,
-    humor_flavor_step_type_id: humorFlavorStepTypeId || null,
+    llm_input_type_id: llmInputTypeId,
+    llm_output_type_id: llmOutputTypeId,
+    llm_model_id: llmModelId,
+    humor_flavor_step_type_id: humorFlavorStepTypeId,
     llm_temperature: llmTemperature ?? null,
     llm_system_prompt: llmSystemPrompt || null,
     llm_user_prompt: llmUserPrompt || null,

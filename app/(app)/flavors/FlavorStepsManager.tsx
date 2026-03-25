@@ -383,7 +383,7 @@ export default function FlavorStepsManager({
                     step="0.01"
                     name="llm_temperature"
                     defaultValue={
-                      selectedStep.llm_temperature ?? undefined
+                      selectedStep.llm_temperature ?? ""
                     }
                     className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
                   />
