@@ -311,7 +311,11 @@ export default function FlavorStepsManager({
                 Select a step to edit.
               </div>
             ) : (
-              <form action={updateAction} className="space-y-4">
+              <form
+                key={selectedStep.id}
+                action={updateAction}
+                className="space-y-4"
+              >
                 <input type="hidden" name="id" value={selectedStep.id} />
 
                 <div className="rounded border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 p-3 text-xs text-gray-600 dark:text-gray-300">

@@ -8,7 +8,23 @@ export type StepActionState = {
 };
 
 function parseNumber(value: FormDataEntryValue | null, fallback?: number) {
-  const raw = value == null ? "" : value.toString().trim();
+  const stripQuotes = (input: string) => {
+    let out = input.trim();
+    for (let i = 0; i < 2; i++) {
+      if (
+        (out.startsWith('"') && out.endsWith('"')) ||
+        (out.startsWith("'") && out.endsWith("'"))
+      ) {
+        out = out.slice(1, -1).trim();
+      } else {
+        break;
+      }
+    }
+    return out;
+  };
+
+  let raw = value == null ? "" : value.toString();
+  raw = stripQuotes(raw);
   if (raw === "") return fallback;
   if (raw === "undefined" || raw === "null") return fallback;
   const num = Number(raw);
@@ -18,8 +34,25 @@ function parseNumber(value: FormDataEntryValue | null, fallback?: number) {
 function parseOptionalBigint(
   value: FormDataEntryValue | null
 ): string | null {
-  const raw = value == null ? "" : value.toString().trim();
-  if (raw === "" || raw === "undefined" || raw === "null") return null;
+  const stripQuotes = (input: string) => {
+    let out = input.trim();
+    for (let i = 0; i < 2; i++) {
+      if (
+        (out.startsWith('"') && out.endsWith('"')) ||
+        (out.startsWith("'") && out.endsWith("'"))
+      ) {
+        out = out.slice(1, -1).trim();
+      } else {
+        break;
+      }
+    }
+    return out;
+  };
+
+  let raw = value == null ? "" : value.toString();
+  raw = stripQuotes(raw);
+  if (raw === "") return null;
+  if (raw === "undefined" || raw === "null") return null;
   return raw;
 }
 
