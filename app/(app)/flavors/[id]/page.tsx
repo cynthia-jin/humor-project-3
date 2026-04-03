@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireSuperadmin } from "@/lib/auth";
+import FlavorDeleteButton from "@/app/(app)/flavors/FlavorDeleteButton";
 import FlavorEditForm from "@/app/(app)/flavors/FlavorEditForm";
 import FlavorStepsManager, {
   type FlavorStepRow,
@@ -79,19 +80,22 @@ export default async function EditFlavorPage({
   return (
     <main className="p-6 max-w-6xl min-w-0">
       <div className="mb-6 flex items-start justify-between gap-4">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <Link href="/flavors" className="underline text-sm">
             Back to humor flavors
           </Link>
-          <h1 className="mt-2 text-2xl font-bold text-slate-900 dark:text-slate-100">
-            {flavor.slug ?? "Untitled flavor"}
-          </h1>
+          <div className="mt-2 flex flex-wrap items-center gap-3 gap-y-2">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 break-words">
+              {flavor.slug ?? "Untitled flavor"}
+            </h1>
+            <FlavorDeleteButton id={String(flavorIdNum)} />
+          </div>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
             Manage flavor details, prompt-chain steps, testing, and generated
             caption history.
           </p>
         </div>
-        <div className="text-xs text-slate-500 dark:text-slate-400">
+        <div className="shrink-0 text-xs text-slate-500 dark:text-slate-400">
           Flavor ID: {String(flavor.id)}
         </div>
       </div>
@@ -100,8 +104,7 @@ export default async function EditFlavorPage({
         <div className="mb-3">
           <h2 className="text-lg font-semibold">Flavor details</h2>
           <p className="text-sm text-slate-600 dark:text-slate-300">
-            Update the flavor identity and description. Delete remains in the
-            danger zone below.
+            Update the flavor identity and description.
           </p>
         </div>
         <FlavorEditForm
