@@ -3,7 +3,7 @@
 import { useThemeMode, type ThemeMode } from "@/app/theme/useTheme";
 
 const THEMES: Array<{ value: ThemeMode; label: string }> = [
-  { value: "system", label: "System default" },
+  { value: "system", label: "System" },
   { value: "light", label: "Light" },
   { value: "dark", label: "Dark" },
 ];
@@ -12,22 +12,16 @@ export default function ThemeModeSelect() {
   const { theme, setTheme } = useThemeMode();
 
   return (
-    <div>
-      <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-        Theme
-      </div>
-      <select
-        value={theme}
-        onChange={(e) => setTheme(e.target.value as ThemeMode)}
-        className="w-full rounded border border-gray-200 bg-white text-gray-900 px-3 py-2 text-sm dark:border-gray-800 dark:bg-gray-950 dark:text-gray-100"
-      >
-        {THEMES.map((t) => (
-          <option key={t.value} value={t.value}>
-            {t.label}
-          </option>
-        ))}
-      </select>
-    </div>
+    <select
+      value={theme}
+      onChange={(e) => setTheme(e.target.value as ThemeMode)}
+      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-slate-100/20 transition-shadow"
+    >
+      {THEMES.map((t) => (
+        <option key={t.value} value={t.value}>
+          {t.label}
+        </option>
+      ))}
+    </select>
   );
 }
-

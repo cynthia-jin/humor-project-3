@@ -26,13 +26,15 @@ export type FlavorStepRow = {
 };
 
 const inputClass =
-  "w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100";
+  "w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-slate-100/20 transition-shadow";
 
 function StepFormFields({ step }: { step?: FlavorStepRow | null }) {
   return (
     <>
       <div>
-        <label className="block mb-1 text-sm font-medium">Description</label>
+        <label className="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
+          Description
+        </label>
         <textarea
           name="description"
           rows={2}
@@ -44,7 +46,9 @@ function StepFormFields({ step }: { step?: FlavorStepRow | null }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block mb-1 text-sm font-medium">Input type</label>
+          <label className="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
+            Input type
+          </label>
           <input
             name="llm_input_type_id"
             defaultValue={step?.llm_input_type_id ?? ""}
@@ -53,7 +57,9 @@ function StepFormFields({ step }: { step?: FlavorStepRow | null }) {
           />
         </div>
         <div>
-          <label className="block mb-1 text-sm font-medium">Output type</label>
+          <label className="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
+            Output type
+          </label>
           <input
             name="llm_output_type_id"
             defaultValue={step?.llm_output_type_id ?? ""}
@@ -62,7 +68,9 @@ function StepFormFields({ step }: { step?: FlavorStepRow | null }) {
           />
         </div>
         <div>
-          <label className="block mb-1 text-sm font-medium">Model</label>
+          <label className="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
+            Model
+          </label>
           <input
             name="llm_model_id"
             defaultValue={step?.llm_model_id ?? ""}
@@ -71,7 +79,9 @@ function StepFormFields({ step }: { step?: FlavorStepRow | null }) {
           />
         </div>
         <div>
-          <label className="block mb-1 text-sm font-medium">Step type</label>
+          <label className="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
+            Step type
+          </label>
           <input
             name="humor_flavor_step_type_id"
             defaultValue={step?.humor_flavor_step_type_id ?? ""}
@@ -82,7 +92,9 @@ function StepFormFields({ step }: { step?: FlavorStepRow | null }) {
       </div>
 
       <div>
-        <label className="block mb-1 text-sm font-medium">Temperature</label>
+        <label className="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
+          Temperature
+        </label>
         <input
           type="number"
           step="0.01"
@@ -94,7 +106,9 @@ function StepFormFields({ step }: { step?: FlavorStepRow | null }) {
       </div>
 
       <div>
-        <label className="block mb-1 text-sm font-medium">System prompt</label>
+        <label className="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
+          System prompt
+        </label>
         <textarea
           name="llm_system_prompt"
           rows={3}
@@ -105,7 +119,9 @@ function StepFormFields({ step }: { step?: FlavorStepRow | null }) {
       </div>
 
       <div>
-        <label className="block mb-1 text-sm font-medium">User prompt</label>
+        <label className="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
+          User prompt
+        </label>
         <textarea
           name="llm_user_prompt"
           rows={3}
@@ -129,7 +145,6 @@ export default function FlavorStepsManager({
   const [editorMode, setEditorMode] = useState<"closed" | "create" | "edit">(
     "closed"
   );
-
   const [selectedStepId, setSelectedStepId] = useState<string | null>(null);
 
   const selectedStep = useMemo(
@@ -166,10 +181,7 @@ export default function FlavorStepsManager({
 
   useEffect(() => {
     const ok =
-      createState.ok ||
-      updateState.ok ||
-      deleteState.ok ||
-      reorderState.ok;
+      createState.ok || updateState.ok || deleteState.ok || reorderState.ok;
     if (ok) {
       setEditorMode("closed");
       setSelectedStepId(null);
@@ -179,7 +191,6 @@ export default function FlavorStepsManager({
 
   const firstStepId = steps[0]?.id ?? null;
   const lastStepId = steps[steps.length - 1]?.id ?? null;
-
   const modalOpen = editorMode !== "closed";
 
   function closeModal() {
@@ -188,160 +199,144 @@ export default function FlavorStepsManager({
     setSelectedStepId(null);
   }
 
+  const actionBtnClass =
+    "rounded-md px-2 py-1 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 transition-colors";
+
   return (
-    <section className="mt-8">
-      <div className="mb-4 flex items-end justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-semibold">Flavor steps</h2>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            Reorder and manage the prompt-chain steps for this flavor.
-          </p>
-        </div>
+    <section>
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+          Prompt chain steps
+        </h2>
+        <p className="text-sm text-slate-500 dark:text-slate-400">
+          Steps run in order to transform an image into captions.
+        </p>
       </div>
 
-      {localError ? (
-        <div className="mb-4 rounded border border-red-500 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-200">
+      {localError && (
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-200">
           {localError}
         </div>
-      ) : null}
+      )}
 
-      <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="bg-gray-50 dark:bg-gray-900">
-              <tr>
-                <th className="text-left font-medium py-3 px-4 text-gray-700 dark:text-gray-200 w-16">
-                  Step
-                </th>
-                <th className="text-left font-medium py-3 px-4 text-gray-700 dark:text-gray-200">
-                  Description
-                </th>
-                <th className="text-right font-medium py-3 px-4 text-gray-700 dark:text-gray-200">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-              {steps.map((s, idx) => {
-                const isFirst = s.id === firstStepId;
-                const isLast = s.id === lastStepId;
-                return (
-                  <tr key={s.id}>
-                    <td className="py-3 px-4 align-top text-gray-900 dark:text-gray-100 font-medium">
-                      {idx + 1}
-                    </td>
-                    <td className="py-3 px-4 align-top text-gray-700 dark:text-gray-300">
-                      {s.description ? (
-                        s.description
-                      ) : (
-                        <span className="text-gray-400 dark:text-gray-500 italic">
-                          No description
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 align-top text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <form action={reorderAction}>
-                          <input type="hidden" name="id" value={s.id} />
-                          <input
-                            type="hidden"
-                            name="direction"
-                            value="up"
-                          />
-                          <button
-                            type="submit"
-                            disabled={isFirst || anyPending}
-                            className="rounded border border-gray-200 dark:border-gray-800 px-2 py-1 text-xs text-gray-800 dark:text-gray-200 disabled:opacity-50"
-                          >
-                            Up
-                          </button>
-                        </form>
-                        <form action={reorderAction}>
-                          <input type="hidden" name="id" value={s.id} />
-                          <input
-                            type="hidden"
-                            name="direction"
-                            value="down"
-                          />
-                          <button
-                            type="submit"
-                            disabled={isLast || anyPending}
-                            className="rounded border border-gray-200 dark:border-gray-800 px-2 py-1 text-xs text-gray-800 dark:text-gray-200 disabled:opacity-50"
-                          >
-                            Down
-                          </button>
-                        </form>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedStepId(s.id);
-                            setEditorMode("edit");
-                          }}
-                          className="rounded border border-gray-200 dark:border-gray-800 px-2 py-1 text-xs text-gray-800 dark:text-gray-200"
-                        >
-                          Edit
-                        </button>
-                        <form
-                          action={deleteAction}
-                          onSubmit={(e) => {
-                            const ok = window.confirm("Delete this step?");
-                            if (!ok) e.preventDefault();
-                          }}
-                        >
-                          <input type="hidden" name="id" value={s.id} />
-                          <button
-                            type="submit"
-                            className="rounded bg-red-600 px-2 py-1 text-xs text-white hover:bg-red-700"
-                          >
-                            Delete
-                          </button>
-                        </form>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-
-              {/* Add step row */}
-              <tr>
-                <td
-                  colSpan={3}
-                  className={`px-4 ${steps.length === 0 ? "py-6" : "py-3"}`}
+      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 overflow-hidden">
+        {/* Steps list */}
+        {steps.length > 0 && (
+          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+            {steps.map((s, idx) => {
+              const isFirst = s.id === firstStepId;
+              const isLast = s.id === lastStepId;
+              return (
+                <div
+                  key={s.id}
+                  className="flex items-center gap-4 px-5 py-3.5 group"
                 >
-                  {steps.length === 0 && (
-                    <div className="text-center text-sm text-gray-500 dark:text-gray-400 mb-3">
-                      No steps yet for this flavor.
-                    </div>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedStepId(null);
-                      setEditorMode("create");
-                    }}
-                    className="w-full rounded border border-dashed border-gray-300 dark:border-gray-700 py-2 text-sm text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
-                  >
-                    + Add step
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  {/* Step number */}
+                  <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-semibold text-slate-600 dark:text-slate-300 shrink-0">
+                    {idx + 1}
+                  </div>
+
+                  {/* Description */}
+                  <div className="flex-1 min-w-0 text-sm text-slate-700 dark:text-slate-300">
+                    {s.description || (
+                      <span className="text-slate-400 dark:text-slate-500 italic">
+                        No description
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-1 shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
+                    <form action={reorderAction}>
+                      <input type="hidden" name="id" value={s.id} />
+                      <input type="hidden" name="direction" value="up" />
+                      <button
+                        type="submit"
+                        disabled={isFirst || anyPending}
+                        className={actionBtnClass}
+                        title="Move up"
+                      >
+                        &uarr;
+                      </button>
+                    </form>
+                    <form action={reorderAction}>
+                      <input type="hidden" name="id" value={s.id} />
+                      <input type="hidden" name="direction" value="down" />
+                      <button
+                        type="submit"
+                        disabled={isLast || anyPending}
+                        className={actionBtnClass}
+                        title="Move down"
+                      >
+                        &darr;
+                      </button>
+                    </form>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedStepId(s.id);
+                        setEditorMode("edit");
+                      }}
+                      className={actionBtnClass}
+                    >
+                      Edit
+                    </button>
+                    <form
+                      action={deleteAction}
+                      onSubmit={(e) => {
+                        if (!window.confirm("Delete this step?"))
+                          e.preventDefault();
+                      }}
+                    >
+                      <input type="hidden" name="id" value={s.id} />
+                      <button
+                        type="submit"
+                        className="rounded-md px-2 py-1 text-xs text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 disabled:opacity-40 transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Empty state + Add button */}
+        <div
+          className={`px-5 ${steps.length === 0 ? "py-8" : "py-3 border-t border-slate-100 dark:border-slate-800"}`}
+        >
+          {steps.length === 0 && (
+            <p className="text-center text-sm text-slate-400 dark:text-slate-500 mb-4">
+              No steps yet. Add one to start building the prompt chain.
+            </p>
+          )}
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedStepId(null);
+              setEditorMode("create");
+            }}
+            className="w-full rounded-lg border border-dashed border-slate-300 dark:border-slate-700 py-2.5 text-sm text-slate-500 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+          >
+            + Add step
+          </button>
         </div>
       </div>
 
-      {/* Modal overlay */}
+      {/* Modal */}
       {modalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-4 pt-[10vh] overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 backdrop-blur-[2px] p-4 pt-[10vh] overflow-y-auto"
           onClick={(e) => {
             if (e.target === e.currentTarget) closeModal();
           }}
         >
-          <div className="w-full max-w-2xl rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-xl">
-            {/* Modal header */}
-            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 px-6 py-4">
-              <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+          <div className="w-full max-w-2xl rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-2xl">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4">
+              <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
                 {editorMode === "create"
                   ? `Add step ${steps.length + 1}`
                   : `Edit step ${steps.findIndex((s) => s.id === selectedStepId) + 1}`}
@@ -350,49 +345,45 @@ export default function FlavorStepsManager({
                 type="button"
                 onClick={closeModal}
                 disabled={anyPending}
-                className="rounded p-1 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 disabled:opacity-50"
+                className="rounded-md p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50 transition-colors"
               >
                 <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="1.5"
+                  strokeWidth="2"
+                  strokeLinecap="round"
                 >
-                  <path d="M5 5l10 10M15 5L5 15" />
+                  <path d="M4 4l8 8M12 4L4 12" />
                 </svg>
               </button>
             </div>
 
-            {/* Modal body */}
+            {/* Body */}
             <div className="px-6 py-5">
               {editorMode === "create" ? (
-                <form
-                  action={createAction}
-                  className="space-y-4"
-                >
+                <form action={createAction} className="space-y-5">
                   <input
                     type="hidden"
                     name="humor_flavor_id"
                     value={flavorId}
                   />
                   <StepFormFields />
-
-                  {/* Modal footer */}
-                  <div className="flex items-center justify-end gap-3 pt-2">
+                  <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                     <button
                       type="button"
                       onClick={closeModal}
                       disabled={anyPending}
-                      className="rounded border border-gray-200 dark:border-gray-800 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 disabled:opacity-50"
+                      className="rounded-lg px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 disabled:opacity-50 transition-colors"
                     >
                       Discard
                     </button>
                     <button
                       type="submit"
                       disabled={anyPending}
-                      className="rounded bg-slate-900 px-4 py-2 text-sm text-white dark:bg-slate-100 dark:text-slate-900 disabled:opacity-50"
+                      className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 disabled:opacity-50 transition-colors"
                     >
                       {createPending ? "Adding..." : "Add step"}
                     </button>
@@ -402,25 +393,23 @@ export default function FlavorStepsManager({
                 <form
                   key={selectedStep.id}
                   action={updateAction}
-                  className="space-y-4"
+                  className="space-y-5"
                 >
                   <input type="hidden" name="id" value={selectedStep.id} />
                   <StepFormFields step={selectedStep} />
-
-                  {/* Modal footer */}
-                  <div className="flex items-center justify-end gap-3 pt-2">
+                  <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                     <button
                       type="button"
                       onClick={closeModal}
                       disabled={anyPending}
-                      className="rounded border border-gray-200 dark:border-gray-800 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 disabled:opacity-50"
+                      className="rounded-lg px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 disabled:opacity-50 transition-colors"
                     >
                       Discard
                     </button>
                     <button
                       type="submit"
                       disabled={anyPending}
-                      className="rounded bg-slate-900 px-4 py-2 text-sm text-white dark:bg-slate-100 dark:text-slate-900 disabled:opacity-50"
+                      className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 disabled:opacity-50 transition-colors"
                     >
                       {updatePending ? "Saving..." : "Save changes"}
                     </button>

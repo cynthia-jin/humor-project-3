@@ -17,7 +17,6 @@ export default async function EditFlavorPage({
   const { supabase } = await requireSuperadmin();
   const { id } = await params;
 
-  // Parse + validate so we never send `undefined` into bigint filters.
   const flavorIdNum = Number(id);
   if (!Number.isFinite(flavorIdNum) || !Number.isSafeInteger(flavorIdNum)) {
     return notFound();
@@ -31,13 +30,13 @@ export default async function EditFlavorPage({
 
   if (error) {
     return (
-      <main className="p-6 max-w-4xl">
+      <main className="p-8 max-w-4xl">
         <div className="mb-4">
-          <Link href="/flavors" className="underline text-sm">
-            Back to flavors
+          <Link href="/flavors" className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+            &larr; Back to flavors
           </Link>
         </div>
-        <div className="rounded border border-red-500 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-200">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-200">
           {error.message}
         </div>
       </main>
@@ -57,18 +56,13 @@ export default async function EditFlavorPage({
 
   if (stepsError) {
     return (
-      <main className="p-6 max-w-4xl">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <div>
-            <Link href="/flavors" className="underline text-sm">
-              Back to flavors
-            </Link>
-          </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">
-            Editing ID: {String(flavor.id)}
-          </div>
+      <main className="p-8 max-w-4xl">
+        <div className="mb-4">
+          <Link href="/flavors" className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+            &larr; Back to flavors
+          </Link>
         </div>
-        <div className="rounded border border-red-500 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-200">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-200">
           {stepsError.message}
         </div>
       </main>
@@ -78,60 +72,55 @@ export default async function EditFlavorPage({
   const flavorSteps = (steps ?? []) as FlavorStepRow[];
 
   return (
-    <main className="p-6 max-w-6xl min-w-0">
+    <main className="p-8 max-w-5xl min-w-0">
+      {/* Breadcrumb */}
       <div className="mb-6">
-        <Link href="/flavors" className="underline text-sm text-slate-600 dark:text-slate-300">
-          Back to humor flavors
+        <Link
+          href="/flavors"
+          className="inline-flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+        >
+          &larr; Humor Flavors
         </Link>
-        <div className="mt-2 flex flex-wrap items-center gap-3 gap-y-2">
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 break-words">
-            {flavor.slug ?? "Untitled flavor"}
-          </h1>
-        </div>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-          Manage flavor details, prompt-chain steps, testing, and generated
-          caption history.
-        </p>
-        <div className="mt-3">
-          <FlavorDeleteButton id={String(flavorIdNum)} />
-        </div>
       </div>
 
-      <section className="mb-10">
-        <div className="mb-3">
-          <h2 className="text-lg font-semibold">Flavor details</h2>
-          <p className="text-sm text-slate-600 dark:text-slate-300">
-            Update the flavor identity and description.
-          </p>
+      {/* Page header */}
+      <div className="mb-10 flex items-start justify-between gap-6">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            {flavor.slug ?? "Untitled flavor"}
+          </h1>
+          {flavor.description && (
+            <p className="mt-2 text-slate-600 dark:text-slate-400 max-w-2xl">
+              {flavor.description}
+            </p>
+          )}
         </div>
+        <FlavorDeleteButton id={String(flavorIdNum)} />
+      </div>
+
+      {/* Sections */}
+      <div className="space-y-12">
         <FlavorEditForm
           id={String(flavorIdNum)}
           slug={flavor.slug ?? null}
           description={flavor.description ?? null}
         />
-      </section>
 
-      <section className="mb-10">
         <FlavorStepsManager
           flavorId={String(flavorIdNum)}
           steps={flavorSteps}
         />
-      </section>
 
-      <section className="mb-10">
         <FlavorTestForm
           flavorId={String(flavorIdNum)}
           flavorSlug={flavor.slug ?? null}
         />
-      </section>
 
-      <section className="min-w-0">
         <FlavorCaptions
           flavorId={String(flavorIdNum)}
           flavorSlug={flavor.slug}
         />
-      </section>
+      </div>
     </main>
   );
 }
-

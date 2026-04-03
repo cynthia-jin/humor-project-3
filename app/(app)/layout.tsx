@@ -9,9 +9,9 @@ export default async function AppLayout({
   const { user } = await requireSuperadmin();
 
   return (
-    <div className="min-h-screen flex bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+    <div className="min-h-screen flex bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <Sidebar userEmail={user.email ?? "Unknown user"} />
-      <div className="flex-1 min-w-0">{children}</div>
+      <div className="flex-1 min-w-0 overflow-x-hidden">{children}</div>
     </div>
   );
 }

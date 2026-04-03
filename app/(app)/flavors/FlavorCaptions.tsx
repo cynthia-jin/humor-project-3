@@ -22,9 +22,7 @@ type CaptionsRow = {
 function getCaptionImageUrl(row: CaptionsRow): string | null {
   const image = row.image;
   if (!image) return null;
-  if (Array.isArray(image)) {
-    return image[0]?.url ?? null;
-  }
+  if (Array.isArray(image)) return image[0]?.url ?? null;
   return image.url ?? null;
 }
 
@@ -36,18 +34,15 @@ export default function FlavorCaptions({
   flavorSlug: string | null;
 }) {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
-
   const [captions, setCaptions] = useState<CaptionsRow[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-
     async function load() {
       setLoading(true);
       setError(null);
-
       const { data, error: supaError } = await supabase
         .from("captions")
         .select(
@@ -56,120 +51,110 @@ export default function FlavorCaptions({
         .eq("humor_flavor_id", flavorId)
         .order("created_datetime_utc", { ascending: false })
         .limit(200);
-
       if (cancelled) return;
-
       if (supaError) {
         setError(supaError.message);
         setCaptions([]);
       } else {
         setCaptions((data ?? []) as CaptionsRow[]);
       }
-
       setLoading(false);
     }
-
     void load();
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [supabase, flavorId]);
 
   return (
-    <section className="mt-10 min-w-0">
+    <section className="min-w-0">
       <div className="mb-4 flex items-center justify-between gap-4">
-        <h3 className="text-lg font-semibold">
-          Generated captions / history{flavorSlug ? ` for ${flavorSlug}` : ""}
-        </h3>
-        <div className="text-xs text-gray-500 dark:text-gray-400">
-          Total: {captions.length}
+        <div>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            Caption history
+          </h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Previously generated captions
+            {flavorSlug && (
+              <> for <span className="font-medium text-slate-700 dark:text-slate-300">{flavorSlug}</span></>
+            )}
+          </p>
         </div>
+        {captions.length > 0 && (
+          <span className="text-xs text-slate-400 dark:text-slate-500 tabular-nums">
+            {captions.length} caption{captions.length !== 1 ? "s" : ""}
+          </span>
+        )}
       </div>
 
-      {loading ? (
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6 text-sm text-gray-600 dark:text-gray-300">
-          Loading captions...
+      {loading && (
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-8 text-center">
+          <p className="text-sm text-slate-500 dark:text-slate-400 animate-pulse">
+            Loading captions...
+          </p>
         </div>
-      ) : null}
+      )}
 
-      {error ? (
-        <div className="rounded border border-red-500 bg-red-50 p-4 text-red-700 text-sm dark:border-red-800 dark:bg-red-950/30 dark:text-red-200">
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 text-sm dark:border-red-800 dark:bg-red-950/30 dark:text-red-200">
           {error}
         </div>
-      ) : null}
+      )}
 
-      {!loading && !error && captions.length === 0 ? (
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6">
-          <div className="text-sm text-gray-600 dark:text-gray-300">
-            No captions exist for this flavor yet.
-          </div>
+      {!loading && !error && captions.length === 0 && (
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-8 text-center">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            No captions yet. Use the test section above to generate some.
+          </p>
         </div>
-      ) : null}
+      )}
 
-      {!loading && !error && captions.length > 0 ? (
-        <div className="space-y-4">
-          {captions.map((c) => (
-            <article
-              key={String(c.id)}
-              className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-4"
-            >
-              <div className="flex items-start gap-4 min-w-0">
-                <div className="w-16 h-16 shrink-0 rounded-md overflow-hidden border border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-900">
-                  {getCaptionImageUrl(c) ? (
-                    <img
-                      src={getCaptionImageUrl(c) ?? ""}
-                      alt="Caption image"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="h-full w-full flex items-center justify-center text-[10px] text-gray-500 dark:text-gray-400">
-                      No image
+      {!loading && !error && captions.length > 0 && (
+        <div className="space-y-3">
+          {captions.map((c) => {
+            const imageUrl = getCaptionImageUrl(c);
+            return (
+              <article
+                key={String(c.id)}
+                className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-4"
+              >
+                <div className="flex items-start gap-4 min-w-0">
+                  {imageUrl && (
+                    <div className="w-14 h-14 shrink-0 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
+                      <img
+                        src={imageUrl}
+                        alt="Caption image"
+                        className="h-full w-full object-cover"
+                      />
                     </div>
                   )}
-                </div>
 
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap break-words">
-                    {c.content ?? "—"}
-                  </p>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm text-slate-900 dark:text-slate-100 whitespace-pre-wrap break-words">
+                      {c.content ?? "—"}
+                    </p>
 
-                  <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                    <span className="rounded border border-gray-200 dark:border-gray-800 px-2 py-1 text-gray-700 dark:text-gray-300">
-                      Likes: {c.like_count ?? 0}
-                    </span>
-                    <span className="rounded border border-gray-200 dark:border-gray-800 px-2 py-1 text-gray-700 dark:text-gray-300">
-                      Public: {c.is_public ? "Yes" : "No"}
-                    </span>
-                    <span className="rounded border border-gray-200 dark:border-gray-800 px-2 py-1 text-gray-700 dark:text-gray-300">
-                      Featured: {c.is_featured ? "Yes" : "No"}
-                    </span>
-                    <span className="rounded border border-gray-200 dark:border-gray-800 px-2 py-1 text-gray-700 dark:text-gray-300">
-                      Created: {formatDate(c.created_datetime_utc)}
-                    </span>
-                  </div>
-
-                  <details className="mt-3">
-                    <summary className="cursor-pointer text-xs text-gray-500 dark:text-gray-400">
-                      Technical details
-                    </summary>
-                    <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 space-y-1 break-all">
-                      <div>Caption ID: {c.id}</div>
-                      <div>Profile ID: {c.profile_id}</div>
-                      <div>Image ID: {c.image_id ?? "—"}</div>
-                      <div>Prompt Chain ID: {c.llm_prompt_chain_id ?? "—"}</div>
-                      <div>
-                        Caption Request ID: {c.caption_request_id ?? "—"}
-                      </div>
+                    <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+                      <span>{formatDate(c.created_datetime_utc)}</span>
+                      {(c.like_count ?? 0) > 0 && (
+                        <span>{c.like_count} likes</span>
+                      )}
+                      {c.is_public && (
+                        <span className="rounded-full bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 px-2 py-0.5">
+                          Public
+                        </span>
+                      )}
+                      {c.is_featured && (
+                        <span className="rounded-full bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 px-2 py-0.5">
+                          Featured
+                        </span>
+                      )}
                     </div>
-                  </details>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
-      ) : null}
+      )}
     </section>
   );
 }
-
