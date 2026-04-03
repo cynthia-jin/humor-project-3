@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useRouter } from "next/navigation";
 import { updateFlavor } from "./actions";
 
 export default function FlavorEditForm({
@@ -12,6 +13,7 @@ export default function FlavorEditForm({
   slug: string | null;
   description: string | null;
 }) {
+  const router = useRouter();
   const [updateState, updateFormAction, isPending] = useActionState(updateFlavor, {});
 
   return (
@@ -49,16 +51,16 @@ export default function FlavorEditForm({
         <div className="flex items-center gap-3">
           <button
             type="submit"
-            className="rounded bg-slate-900 px-4 py-2 text-white dark:bg-slate-100 dark:text-slate-900"
+            disabled={isPending}
+            className="rounded bg-slate-900 px-4 py-2 text-white dark:bg-slate-100 dark:text-slate-900 disabled:opacity-50"
           >
-            Save
+            {isPending ? "Saving..." : "Save"}
           </button>
           <button
             type="button"
-            onClick={() => {
-              window.location.href = `/flavors/${id}`;
-            }}
-            className="rounded border border-gray-200 dark:border-gray-800 px-4 py-2 text-sm text-gray-900 dark:text-gray-100"
+            onClick={() => router.refresh()}
+            disabled={isPending}
+            className="rounded border border-gray-200 dark:border-gray-800 px-4 py-2 text-sm text-gray-900 dark:text-gray-100 disabled:opacity-50"
           >
             Reset
           </button>

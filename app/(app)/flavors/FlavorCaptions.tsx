@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { formatDate } from "@/lib/formatDate";
 
 type CaptionsRow = {
   id: string;
@@ -144,7 +145,7 @@ export default function FlavorCaptions({
                       Featured: {c.is_featured ? "Yes" : "No"}
                     </span>
                     <span className="rounded border border-gray-200 dark:border-gray-800 px-2 py-1 text-gray-700 dark:text-gray-300">
-                      Created: {c.created_datetime_utc ?? "—"}
+                      Created: {formatDate(c.created_datetime_utc)}
                     </span>
                   </div>
 

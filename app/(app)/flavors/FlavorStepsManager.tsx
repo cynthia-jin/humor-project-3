@@ -44,22 +44,24 @@ export default function FlavorStepsManager({
     [selectedStepId, steps]
   );
 
-  const [createState, createAction] = useActionState(
+  const [createState, createAction, createPending] = useActionState(
     createFlavorStep,
     {} as StepActionState
   );
-  const [updateState, updateAction] = useActionState(
+  const [updateState, updateAction, updatePending] = useActionState(
     updateFlavorStep,
     {} as StepActionState
   );
-  const [deleteState, deleteAction] = useActionState(
+  const [deleteState, deleteAction, deletePending] = useActionState(
     deleteFlavorStep,
     {} as StepActionState
   );
-  const [reorderState, reorderAction] = useActionState(
+  const [reorderState, reorderAction, reorderPending] = useActionState(
     reorderFlavorStep,
     {} as StepActionState
   );
+
+  const anyPending = createPending || updatePending || deletePending || reorderPending;
 
   const localError =
     createState.error ||
@@ -121,13 +123,10 @@ export default function FlavorStepsManager({
               <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
                   <th className="text-left font-medium py-3 px-4 text-gray-700 dark:text-gray-200 w-16">
-                    #
+                    Step
                   </th>
                   <th className="text-left font-medium py-3 px-4 text-gray-700 dark:text-gray-200">
-                    order_by
-                  </th>
-                  <th className="text-left font-medium py-3 px-4 text-gray-700 dark:text-gray-200">
-                    description
+                    Description
                   </th>
                   <th className="text-right font-medium py-3 px-4 text-gray-700 dark:text-gray-200">
                     Actions
@@ -140,14 +139,11 @@ export default function FlavorStepsManager({
                   const isLast = s.id === lastStepId;
                   return (
                     <tr key={s.id}>
-                      <td className="py-3 px-4 align-top text-gray-900 dark:text-gray-100">
+                      <td className="py-3 px-4 align-top text-gray-900 dark:text-gray-100 font-medium">
                         {idx + 1}
                       </td>
                       <td className="py-3 px-4 align-top text-gray-700 dark:text-gray-300">
-                        <span className="font-mono">{s.order_by}</span>
-                      </td>
-                      <td className="py-3 px-4 align-top text-gray-700 dark:text-gray-300">
-                        {s.description ? s.description : <span>-</span>}
+                        {s.description ? s.description : <span className="text-gray-400 dark:text-gray-500 italic">No description</span>}
                       </td>
                       <td className="py-3 px-4 align-top text-right">
                         <div className="flex items-center justify-end gap-2">
@@ -156,7 +152,7 @@ export default function FlavorStepsManager({
                             <input type="hidden" name="direction" value="up" />
                             <button
                               type="submit"
-                              disabled={isFirst}
+                              disabled={isFirst || anyPending}
                               className="rounded border border-gray-200 dark:border-gray-800 px-2 py-1 text-xs text-gray-800 dark:text-gray-200 disabled:opacity-50"
                             >
                               Up
@@ -171,7 +167,7 @@ export default function FlavorStepsManager({
                             />
                             <button
                               type="submit"
-                              disabled={isLast}
+                              disabled={isLast || anyPending}
                               className="rounded border border-gray-200 dark:border-gray-800 px-2 py-1 text-xs text-gray-800 dark:text-gray-200 disabled:opacity-50"
                             >
                               Down
@@ -211,7 +207,7 @@ export default function FlavorStepsManager({
                 })}
                 {steps.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="py-8 px-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                    <td colSpan={3} className="py-8 px-4 text-center text-sm text-gray-500 dark:text-gray-400">
                       No steps yet for this flavor.
                     </td>
                   </tr>
@@ -252,20 +248,18 @@ export default function FlavorStepsManager({
                 <input type="hidden" name="humor_flavor_id" value={flavorId} />
 
                 <div>
-                  <label className="block mb-1 font-medium">description</label>
+                  <label className="block mb-1 font-medium">Description</label>
                   <textarea
                     name="description"
                     rows={2}
                     className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
-                    placeholder="Optional description"
+                    placeholder="What this step does"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block mb-1 font-medium">
-                      llm_input_type_id
-                    </label>
+                    <label className="block mb-1 font-medium">Input type</label>
                     <input
                       name="llm_input_type_id"
                       className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
@@ -274,9 +268,7 @@ export default function FlavorStepsManager({
                   </div>
 
                   <div>
-                    <label className="block mb-1 font-medium">
-                      llm_output_type_id
-                    </label>
+                    <label className="block mb-1 font-medium">Output type</label>
                     <input
                       name="llm_output_type_id"
                       className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
@@ -285,7 +277,7 @@ export default function FlavorStepsManager({
                   </div>
 
                   <div>
-                    <label className="block mb-1 font-medium">llm_model_id</label>
+                    <label className="block mb-1 font-medium">Model</label>
                     <input
                       name="llm_model_id"
                       className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
@@ -294,9 +286,7 @@ export default function FlavorStepsManager({
                   </div>
 
                   <div>
-                    <label className="block mb-1 font-medium">
-                      humor_flavor_step_type_id
-                    </label>
+                    <label className="block mb-1 font-medium">Step type</label>
                     <input
                       name="humor_flavor_step_type_id"
                       className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
@@ -306,7 +296,7 @@ export default function FlavorStepsManager({
                 </div>
 
                 <div>
-                  <label className="block mb-1 font-medium">llm_temperature</label>
+                  <label className="block mb-1 font-medium">Temperature</label>
                   <input
                     type="number"
                     step="0.01"
@@ -317,30 +307,31 @@ export default function FlavorStepsManager({
                 </div>
 
                 <div>
-                  <label className="block mb-1 font-medium">
-                    llm_system_prompt
-                  </label>
+                  <label className="block mb-1 font-medium">System prompt</label>
                   <textarea
                     name="llm_system_prompt"
                     rows={3}
                     className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                    placeholder="Instructions for the LLM"
                   />
                 </div>
 
                 <div>
-                  <label className="block mb-1 font-medium">llm_user_prompt</label>
+                  <label className="block mb-1 font-medium">User prompt</label>
                   <textarea
                     name="llm_user_prompt"
                     rows={3}
                     className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                    placeholder="The prompt sent to the LLM"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="rounded bg-slate-900 px-4 py-2 text-white dark:bg-slate-100 dark:text-slate-900"
+                  disabled={anyPending}
+                  className="rounded bg-slate-900 px-4 py-2 text-white dark:bg-slate-100 dark:text-slate-900 disabled:opacity-50"
                 >
-                  Add step
+                  {createPending ? "Adding..." : "Add step"}
                 </button>
               </form>
             </div>
@@ -371,30 +362,24 @@ export default function FlavorStepsManager({
               >
                 <input type="hidden" name="id" value={selectedStep.id} />
 
-                <div className="rounded border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 p-3 text-xs text-gray-600 dark:text-gray-300">
-                  Editing step:{" "}
-                  <span className="font-mono break-all">{selectedStep.id}</span>
-                  <div>
-                    order_by:{" "}
-                    <span className="font-mono">{selectedStep.order_by}</span>
-                  </div>
+                <div className="rounded border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-xs text-gray-500 dark:text-gray-400">
+                  Editing step #{steps.findIndex((s) => s.id === selectedStep.id) + 1}
                 </div>
 
                 <div>
-                  <label className="block mb-1 font-medium">description</label>
+                  <label className="block mb-1 font-medium">Description</label>
                   <textarea
                     name="description"
                     rows={2}
                     defaultValue={selectedStep.description ?? ""}
                     className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                    placeholder="What this step does"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block mb-1 font-medium">
-                      llm_input_type_id
-                    </label>
+                    <label className="block mb-1 font-medium">Input type</label>
                     <input
                       name="llm_input_type_id"
                       defaultValue={selectedStep.llm_input_type_id ?? ""}
@@ -403,9 +388,7 @@ export default function FlavorStepsManager({
                   </div>
 
                   <div>
-                    <label className="block mb-1 font-medium">
-                      llm_output_type_id
-                    </label>
+                    <label className="block mb-1 font-medium">Output type</label>
                     <input
                       name="llm_output_type_id"
                       defaultValue={selectedStep.llm_output_type_id ?? ""}
@@ -414,7 +397,7 @@ export default function FlavorStepsManager({
                   </div>
 
                   <div>
-                    <label className="block mb-1 font-medium">llm_model_id</label>
+                    <label className="block mb-1 font-medium">Model</label>
                     <input
                       name="llm_model_id"
                       defaultValue={selectedStep.llm_model_id ?? ""}
@@ -423,9 +406,7 @@ export default function FlavorStepsManager({
                   </div>
 
                   <div>
-                    <label className="block mb-1 font-medium">
-                      humor_flavor_step_type_id
-                    </label>
+                    <label className="block mb-1 font-medium">Step type</label>
                     <input
                       name="humor_flavor_step_type_id"
                       defaultValue={selectedStep.humor_flavor_step_type_id ?? ""}
@@ -435,7 +416,7 @@ export default function FlavorStepsManager({
                 </div>
 
                 <div>
-                  <label className="block mb-1 font-medium">llm_temperature</label>
+                  <label className="block mb-1 font-medium">Temperature</label>
                   <input
                     type="number"
                     step="0.01"
@@ -446,32 +427,33 @@ export default function FlavorStepsManager({
                 </div>
 
                 <div>
-                  <label className="block mb-1 font-medium">
-                    llm_system_prompt
-                  </label>
+                  <label className="block mb-1 font-medium">System prompt</label>
                   <textarea
                     name="llm_system_prompt"
                     rows={3}
                     defaultValue={selectedStep.llm_system_prompt ?? ""}
                     className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                    placeholder="Instructions for the LLM"
                   />
                 </div>
 
                 <div>
-                  <label className="block mb-1 font-medium">llm_user_prompt</label>
+                  <label className="block mb-1 font-medium">User prompt</label>
                   <textarea
                     name="llm_user_prompt"
                     rows={3}
                     defaultValue={selectedStep.llm_user_prompt ?? ""}
                     className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+                    placeholder="The prompt sent to the LLM"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="rounded bg-slate-900 px-4 py-2 text-white dark:bg-slate-100 dark:text-slate-900"
+                  disabled={anyPending}
+                  className="rounded bg-slate-900 px-4 py-2 text-white dark:bg-slate-100 dark:text-slate-900 disabled:opacity-50"
                 >
-                  Save changes
+                  {updatePending ? "Saving..." : "Save changes"}
                 </button>
               </form>
             </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { formatDate } from "@/lib/formatDate";
 import {
   generateCaptionsForFlavor,
   generatePresignedUploadUrl,
@@ -491,16 +492,18 @@ export default function FlavorTestForm({
                       <div className="break-words">
                         {c.content ?? "—"}
                       </div>
-                      <div className="mt-2 text-xs text-slate-500 dark:text-slate-400 break-all">
-                        Caption ID: {c.id ?? "—"} · Image ID:{" "}
-                        {c.image_id ?? "—"} · Flavor ID:{" "}
-                        {c.humor_flavor_id ?? "—"}
-                      </div>
-                      <div className="mt-1 text-xs text-slate-500 dark:text-slate-400 break-all">
-                        Caption Request:{" "}
-                        {c.caption_request_id ?? "—"} · Chain:{" "}
-                        {c.llm_prompt_chain_id ?? "—"}
-                      </div>
+                      <details className="mt-2">
+                        <summary className="cursor-pointer text-xs text-slate-500 dark:text-slate-400">
+                          Details
+                        </summary>
+                        <div className="mt-1 text-xs text-slate-500 dark:text-slate-400 break-all space-y-0.5">
+                          <div>Caption ID: {c.id ?? "—"}</div>
+                          <div>Image ID: {c.image_id ?? "—"}</div>
+                          <div>Flavor ID: {c.humor_flavor_id ?? "—"}</div>
+                          <div>Caption Request: {c.caption_request_id ?? "—"}</div>
+                          <div>Chain: {c.llm_prompt_chain_id ?? "—"}</div>
+                        </div>
+                      </details>
                     </td>
                     <td className="py-3 px-4 align-top text-slate-700 dark:text-slate-300">
                       {c.like_count ?? "0"}
@@ -512,7 +515,7 @@ export default function FlavorTestForm({
                       {c.is_featured ? "Yes" : "No"}
                     </td>
                     <td className="py-3 px-4 align-top text-slate-700 dark:text-slate-300">
-                      {c.created_datetime_utc ?? "—"}
+                      {formatDate(c.created_datetime_utc)}
                     </td>
                   </tr>
                 ))}

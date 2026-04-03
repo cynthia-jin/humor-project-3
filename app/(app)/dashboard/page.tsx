@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { requireSuperadmin } from "@/lib/auth";
+import { formatDate } from "@/lib/formatDate";
 
 export default async function DashboardPage() {
   const { supabase } = await requireSuperadmin();
@@ -126,7 +128,7 @@ export default async function DashboardPage() {
             Recent flavors
           </div>
           <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Small overview table (step counts derived from `humor_flavor_steps`).
+            Latest flavors with step counts and activity.
           </div>
         </div>
 
@@ -152,21 +154,21 @@ export default async function DashboardPage() {
                   return (
                     <tr key={String(f.id)}>
                       <td className="py-3 pr-3">
-                        <div className="font-medium text-slate-900 dark:text-slate-100">
+                        <Link
+                          href={`/flavors/${String(f.id)}`}
+                          className="font-medium text-slate-900 dark:text-slate-100 underline"
+                        >
                           {f.slug ?? "(no slug)"}
-                        </div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 break-all">
-                          ID: {String(f.id)}
-                        </div>
+                        </Link>
                       </td>
                       <td className="py-3 pr-3 text-slate-700 dark:text-slate-300">
                         {summary?.stepCount ?? 0}
                       </td>
                       <td className="py-3 pr-3 text-slate-700 dark:text-slate-300">
-                        {f.created_datetime_utc}
+                        {formatDate(f.created_datetime_utc)}
                       </td>
                       <td className="py-3 text-slate-700 dark:text-slate-300">
-                        {summary?.lastStepAtUtc ?? "—"}
+                        {formatDate(summary?.lastStepAtUtc)}
                       </td>
                     </tr>
                   );

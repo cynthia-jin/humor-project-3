@@ -20,9 +20,10 @@ export default function FlavorDeleteButton({ id }: { id: string }) {
         <input type="hidden" name="id" value={id} />
         <button
           type="submit"
-          className="rounded bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700"
+          disabled={isPending}
+          className="rounded bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
         >
-          Delete
+          {isPending ? "Deleting..." : "Delete"}
         </button>
       </form>
       {deleteState.error ? (

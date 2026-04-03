@@ -79,24 +79,21 @@ export default async function EditFlavorPage({
 
   return (
     <main className="p-6 max-w-6xl min-w-0">
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <Link href="/flavors" className="underline text-sm">
-            Back to humor flavors
-          </Link>
-          <div className="mt-2 flex flex-wrap items-center gap-3 gap-y-2">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 break-words">
-              {flavor.slug ?? "Untitled flavor"}
-            </h1>
-            <FlavorDeleteButton id={String(flavorIdNum)} />
-          </div>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-            Manage flavor details, prompt-chain steps, testing, and generated
-            caption history.
-          </p>
+      <div className="mb-6">
+        <Link href="/flavors" className="underline text-sm text-slate-600 dark:text-slate-300">
+          Back to humor flavors
+        </Link>
+        <div className="mt-2 flex flex-wrap items-center gap-3 gap-y-2">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 break-words">
+            {flavor.slug ?? "Untitled flavor"}
+          </h1>
         </div>
-        <div className="shrink-0 text-xs text-slate-500 dark:text-slate-400">
-          Flavor ID: {String(flavor.id)}
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+          Manage flavor details, prompt-chain steps, testing, and generated
+          caption history.
+        </p>
+        <div className="mt-3">
+          <FlavorDeleteButton id={String(flavorIdNum)} />
         </div>
       </div>
 

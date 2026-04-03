@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireSuperadmin } from "@/lib/auth";
+import { formatDate } from "@/lib/formatDate";
 
 export default async function FlavorsPage() {
   const { supabase } = await requireSuperadmin();
@@ -79,9 +80,6 @@ export default async function FlavorsPage() {
                     >
                       {f.slug}
                     </Link>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 break-all">
-                      ID: {f.id}
-                    </div>
                   </td>
                   <td className="py-3 px-4 align-top text-slate-700 dark:text-slate-300">
                     {f.description ? (
@@ -91,7 +89,7 @@ export default async function FlavorsPage() {
                     )}
                   </td>
                   <td className="py-3 px-4 align-top text-slate-700 dark:text-slate-300">
-                    {f.created_datetime_utc}
+                    {formatDate(f.created_datetime_utc)}
                   </td>
                   <td className="py-3 px-4 align-top text-right">
                     <Link
