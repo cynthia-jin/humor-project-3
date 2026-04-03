@@ -21,15 +21,28 @@ export async function createFlavor(
     description,
   };
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("humor_flavors")
-    .insert(payload);
+    .insert(payload)
+    .select("id")
+    .single();
 
   if (error) {
     return { error: error.message };
   }
 
-  redirect("/flavors");
+  const rawId = data?.id;
+  const newId =
+    typeof rawId === "number"
+      ? rawId
+      : typeof rawId === "string"
+        ? Number(rawId)
+        : NaN;
+  if (!Number.isFinite(newId) || !Number.isSafeInteger(newId)) {
+    return { error: "Created flavor but could not read its id." };
+  }
+
+  redirect(`/flavors/${newId}`);
 }
 
 export async function updateFlavor(
