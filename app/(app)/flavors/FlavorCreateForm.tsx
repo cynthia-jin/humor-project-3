@@ -1,12 +1,12 @@
 "use client";
 
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import { createFlavor, type FlavorActionState } from "./actions";
 
 const initialState: FlavorActionState = {};
 
 export default function FlavorCreateForm() {
-  const [state, formAction] = useFormState(createFlavor, initialState);
+  const [state, formAction, isPending] = useActionState(createFlavor, initialState);
 
   return (
     <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6">
@@ -31,7 +31,7 @@ export default function FlavorCreateForm() {
         </div>
 
         {state.error ? (
-          <div className="rounded border border-red-500 bg-red-50 p-3 text-red-700 text-sm">
+          <div className="rounded border border-red-500 bg-red-50 p-3 text-red-700 text-sm dark:border-red-800 dark:bg-red-950/30 dark:text-red-200">
             {state.error}
           </div>
         ) : null}

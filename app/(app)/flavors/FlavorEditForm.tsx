@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import { updateFlavor } from "./actions";
 
 export default function FlavorEditForm({
@@ -12,7 +12,7 @@ export default function FlavorEditForm({
   slug: string | null;
   description: string | null;
 }) {
-  const [updateState, updateFormAction] = useFormState(updateFlavor, {});
+  const [updateState, updateFormAction, isPending] = useActionState(updateFlavor, {});
 
   return (
     <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6">
@@ -41,7 +41,7 @@ export default function FlavorEditForm({
         </div>
 
         {updateState.error ? (
-          <div className="rounded border border-red-500 bg-red-50 p-3 text-red-700 text-sm">
+          <div className="rounded border border-red-500 bg-red-50 p-3 text-red-700 text-sm dark:border-red-800 dark:bg-red-950/30 dark:text-red-200">
             {updateState.error}
           </div>
         ) : null}

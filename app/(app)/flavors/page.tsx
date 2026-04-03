@@ -14,7 +14,7 @@ export default async function FlavorsPage() {
     return (
       <main className="p-6 max-w-5xl">
         <h1 className="text-2xl font-bold mb-4">Humor Flavors</h1>
-        <div className="rounded border border-red-500 bg-red-50 p-4 text-red-700">
+        <div className="rounded border border-red-500 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-200">
           {error.message}
         </div>
       </main>

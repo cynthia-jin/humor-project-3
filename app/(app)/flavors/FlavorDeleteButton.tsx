@@ -1,10 +1,10 @@
 "use client";
 
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import { deleteFlavor } from "./actions";
 
 export default function FlavorDeleteButton({ id }: { id: string }) {
-  const [deleteState, deleteFormAction] = useFormState(deleteFlavor, {});
+  const [deleteState, deleteFormAction, isPending] = useActionState(deleteFlavor, {});
 
   return (
     <div className="inline-flex flex-col items-start gap-2">

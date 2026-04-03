@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useFormState } from "react-dom";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import {
   createFlavorStep,
   deleteFlavorStep,
@@ -45,19 +44,19 @@ export default function FlavorStepsManager({
     [selectedStepId, steps]
   );
 
-  const [createState, createAction] = useFormState(
+  const [createState, createAction] = useActionState(
     createFlavorStep,
     {} as StepActionState
   );
-  const [updateState, updateAction] = useFormState(
+  const [updateState, updateAction] = useActionState(
     updateFlavorStep,
     {} as StepActionState
   );
-  const [deleteState, deleteAction] = useFormState(
+  const [deleteState, deleteAction] = useActionState(
     deleteFlavorStep,
     {} as StepActionState
   );
-  const [reorderState, reorderAction] = useFormState(
+  const [reorderState, reorderAction] = useActionState(
     reorderFlavorStep,
     {} as StepActionState
   );
@@ -76,6 +75,8 @@ export default function FlavorStepsManager({
       deleteState.ok ||
       reorderState.ok;
     if (ok) {
+      setEditorMode("closed");
+      setSelectedStepId(null);
       router.refresh();
     }
   }, [createState.ok, updateState.ok, deleteState.ok, reorderState.ok, router]);

@@ -4,7 +4,7 @@ import { requireSuperadmin } from "@/lib/auth";
 
 export type StepActionState = {
   error?: string;
-  ok?: boolean;
+  ok?: number; // timestamp — changes on every success so useEffect always fires
 };
 
 function parseNumber(value: FormDataEntryValue | null, fallback?: number) {
@@ -149,7 +149,7 @@ export async function createFlavorStep(
   const { error } = await supabase.from("humor_flavor_steps").insert(payload);
   if (error) return { error: error.message };
 
-  return { ok: true };
+  return { ok: Date.now() };
 }
 
 export async function updateFlavorStep(
@@ -197,7 +197,7 @@ export async function updateFlavorStep(
 
   if (error) return { error: error.message };
 
-  return { ok: true };
+  return { ok: Date.now() };
 }
 
 export async function deleteFlavorStep(
@@ -216,7 +216,7 @@ export async function deleteFlavorStep(
 
   if (error) return { error: error.message };
 
-  return { ok: true };
+  return { ok: Date.now() };
 }
 
 export async function reorderFlavorStep(
@@ -269,7 +269,7 @@ export async function reorderFlavorStep(
   if (adjacentError) return { error: adjacentError.message };
   if (!adjacent) {
     // Already at the edge; no-op.
-    return { ok: true };
+    return { ok: Date.now() };
   }
 
   const adjacentOrder = Number(adjacent.order_by);
@@ -319,6 +319,6 @@ export async function reorderFlavorStep(
     .eq("id", current.id);
   if (t3) return { error: t3.message };
 
-  return { ok: true };
+  return { ok: Date.now() };
 }
 

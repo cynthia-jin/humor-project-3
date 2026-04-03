@@ -5,9 +5,11 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function signInWithGoogle() {
     setLoading(true);
+    setError(null);
     try {
       const supabase = createSupabaseBrowserClient();
 
@@ -19,10 +21,10 @@ export default function LoginPage() {
       });
 
       if (error) {
-        alert(error.message);
+        setError(error.message);
       }
     } catch {
-      alert("Unexpected login error. Check console.");
+      setError("Unexpected login error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -37,6 +39,12 @@ export default function LoginPage() {
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
           Continue with Google to manage humor prompt chains.
         </p>
+
+        {error && (
+          <div className="mt-4 rounded border border-red-500 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-200">
+            {error}
+          </div>
+        )}
 
         <button
           onClick={signInWithGoogle}
