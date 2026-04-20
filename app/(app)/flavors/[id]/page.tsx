@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireSuperadmin } from "@/lib/auth";
 import FlavorDeleteButton from "@/app/(app)/flavors/FlavorDeleteButton";
+import FlavorDuplicateButton from "@/app/(app)/flavors/FlavorDuplicateButton";
 import FlavorEditForm from "@/app/(app)/flavors/FlavorEditForm";
 import FlavorStepsManager, {
   type FlavorStepRow,
@@ -95,7 +96,10 @@ export default async function EditFlavorPage({
             </p>
           )}
         </div>
-        <FlavorDeleteButton id={String(flavorIdNum)} />
+        <div className="flex items-center gap-1 shrink-0">
+          <FlavorDuplicateButton id={String(flavorIdNum)} variant="subtle" />
+          <FlavorDeleteButton id={String(flavorIdNum)} />
+        </div>
       </div>
 
       {/* Sections */}

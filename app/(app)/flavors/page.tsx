@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireSuperadmin } from "@/lib/auth";
 import { formatDate } from "@/lib/formatDate";
+import FlavorDuplicateButton from "@/app/(app)/flavors/FlavorDuplicateButton";
 
 export default async function FlavorsPage() {
   const { supabase } = await requireSuperadmin();
@@ -92,12 +93,15 @@ export default async function FlavorsPage() {
                     {formatDate(f.created_datetime_utc)}
                   </td>
                   <td className="py-3 px-4 align-top text-right">
-                    <Link
-                      href={`/flavors/${String(f.id)}`}
-                      className="inline-block rounded border border-slate-200 dark:border-slate-800 px-3 py-1 text-xs text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900"
-                    >
-                      Edit
-                    </Link>
+                    <div className="inline-flex items-center gap-2">
+                      <FlavorDuplicateButton id={String(f.id)} variant="row" />
+                      <Link
+                        href={`/flavors/${String(f.id)}`}
+                        className="inline-block rounded border border-slate-200 dark:border-slate-800 px-3 py-1 text-xs text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900"
+                      >
+                        Edit
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}
