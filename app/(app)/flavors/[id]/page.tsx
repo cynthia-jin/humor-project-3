@@ -12,11 +12,15 @@ import FlavorTestForm from "@/app/(app)/flavors/FlavorTestForm";
 
 export default async function EditFlavorPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { supabase } = await requireSuperadmin();
   const { id } = await params;
+  const query = await searchParams;
+  const copyCreated = query.duplicated === "1";
 
   const flavorIdNum = Number(id);
   if (!Number.isFinite(flavorIdNum) || !Number.isSafeInteger(flavorIdNum)) {
@@ -73,7 +77,7 @@ export default async function EditFlavorPage({
   const flavorSteps = (steps ?? []) as FlavorStepRow[];
 
   return (
-    <main className="p-8 max-w-5xl min-w-0">
+    <main className="p-6 sm:p-8 max-w-5xl min-w-0">
       {/* Breadcrumb */}
       <div className="mb-6">
         <Link
@@ -85,7 +89,7 @@ export default async function EditFlavorPage({
       </div>
 
       {/* Page header */}
-      <div className="mb-10 flex items-start justify-between gap-6">
+      <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:gap-6">
         <div className="min-w-0">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             {flavor.slug ?? "Untitled flavor"}
@@ -96,11 +100,25 @@ export default async function EditFlavorPage({
             </p>
           )}
         </div>
-        <div className="flex items-center gap-1 shrink-0">
-          <FlavorDuplicateButton id={String(flavorIdNum)} variant="subtle" />
-          <FlavorDeleteButton id={String(flavorIdNum)} />
+        <div className="flex flex-wrap items-center gap-1 shrink-0">
+          <FlavorDuplicateButton
+            id={String(flavorIdNum)}
+            slug={flavor.slug}
+            variant="subtle"
+          />
+          <FlavorDeleteButton id={String(flavorIdNum)} slug={flavor.slug} />
         </div>
       </div>
+
+      {copyCreated && (
+        <div className="mb-8 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800 dark:border-emerald-900/70 dark:bg-emerald-950/30 dark:text-emerald-200">
+          <div className="font-medium">Copy created and saved.</div>
+          <div className="mt-1">
+            You are now editing the duplicated flavor. Use Save changes only for
+            edits you make from here.
+          </div>
+        </div>
+      )}
 
       {/* Sections */}
       <div className="space-y-12">

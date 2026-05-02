@@ -182,11 +182,15 @@ export default function FlavorStepsManager({
   useEffect(() => {
     const ok =
       createState.ok || updateState.ok || deleteState.ok || reorderState.ok;
-    if (ok) {
+    if (!ok) return;
+
+    const resetTimer = window.setTimeout(() => {
       setEditorMode("closed");
       setSelectedStepId(null);
       router.refresh();
-    }
+    }, 0);
+
+    return () => window.clearTimeout(resetTimer);
   }, [createState.ok, updateState.ok, deleteState.ok, reorderState.ok, router]);
 
   const firstStepId = steps[0]?.id ?? null;

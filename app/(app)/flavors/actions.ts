@@ -180,7 +180,7 @@ export async function duplicateFlavor(
     }
   }
 
-  redirect(`/flavors/${newId}`);
+  redirect(`/flavors/${newId}?duplicated=1`);
 }
 
 export async function deleteFlavor(
@@ -210,4 +210,3 @@ export async function deleteFlavor(
 
   redirect("/flavors");
 }
-

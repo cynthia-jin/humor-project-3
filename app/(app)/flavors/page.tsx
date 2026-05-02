@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { requireSuperadmin } from "@/lib/auth";
-import { formatDate } from "@/lib/formatDate";
-import FlavorDuplicateButton from "@/app/(app)/flavors/FlavorDuplicateButton";
+import FlavorTable from "@/app/(app)/flavors/FlavorTable";
 
 export default async function FlavorsPage() {
   const { supabase } = await requireSuperadmin();
@@ -52,65 +51,8 @@ export default async function FlavorsPage() {
       )}
 
       {flavors && flavors.length > 0 && (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 overflow-hidden">
-          <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="bg-slate-50 dark:bg-slate-900">
-              <tr>
-                <th className="text-left font-medium py-3 px-4 text-slate-700 dark:text-slate-200">
-                  Slug
-                </th>
-                <th className="text-left font-medium py-3 px-4 text-slate-700 dark:text-slate-200">
-                  Description
-                </th>
-                <th className="text-left font-medium py-3 px-4 text-slate-700 dark:text-slate-200">
-                  Created (UTC)
-                </th>
-                <th className="text-right font-medium py-3 px-4 text-slate-700 dark:text-slate-200">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-              {flavors.map((f) => (
-                <tr key={String(f.id)}>
-                  <td className="py-3 px-4 align-top text-slate-900 dark:text-slate-100">
-                    <Link
-                      href={`/flavors/${String(f.id)}`}
-                      className="font-medium underline"
-                    >
-                      {f.slug}
-                    </Link>
-                  </td>
-                  <td className="py-3 px-4 align-top text-slate-700 dark:text-slate-300">
-                    {f.description ? (
-                      <div className="max-w-xl">{f.description}</div>
-                    ) : (
-                      <span className="text-slate-500 dark:text-slate-400">-</span>
-                    )}
-                  </td>
-                  <td className="py-3 px-4 align-top text-slate-700 dark:text-slate-300">
-                    {formatDate(f.created_datetime_utc)}
-                  </td>
-                  <td className="py-3 px-4 align-top text-right">
-                    <div className="inline-flex items-center gap-2">
-                      <FlavorDuplicateButton id={String(f.id)} variant="row" />
-                      <Link
-                        href={`/flavors/${String(f.id)}`}
-                        className="inline-block rounded border border-slate-200 dark:border-slate-800 px-3 py-1 text-xs text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900"
-                      >
-                        Edit
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
-        </div>
+        <FlavorTable flavors={flavors} />
       )}
     </main>
   );
 }
-

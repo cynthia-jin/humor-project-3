@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- Test-set previews use arbitrary external URLs from Supabase rows. */
+
 import { useState, useEffect } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { formatDate } from "@/lib/formatDate";
@@ -22,6 +24,15 @@ type CaptionLike = {
   is_public?: boolean;
   is_featured?: boolean;
 };
+
+const SUPPORTED_IMAGE_TYPES = new Set([
+  "image/png",
+  "image/jpeg",
+  "image/gif",
+  "image/webp",
+]);
+const ACCEPTED_IMAGE_TYPES = "image/png,image/jpeg,image/gif,image/webp";
+const SUPPORTED_IMAGE_LABEL = "PNG, JPEG, GIF, or WebP";
 
 export default function FlavorTestForm({
   flavorId,
@@ -75,6 +86,10 @@ export default function FlavorTestForm({
       }
       if (!file.type) {
         setError("Selected file has no content type. Please use a valid image.");
+        return;
+      }
+      if (!SUPPORTED_IMAGE_TYPES.has(file.type)) {
+        setError(`Please use a ${SUPPORTED_IMAGE_LABEL} image.`);
         return;
       }
     } else {
@@ -264,11 +279,22 @@ export default function FlavorTestForm({
               </label>
               <input
                 type="file"
-                accept="image/*"
+                accept={ACCEPTED_IMAGE_TYPES}
                 disabled={loading}
                 className="block w-full text-sm text-slate-900 dark:text-slate-100 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-slate-700 dark:file:bg-slate-800 dark:file:text-slate-300 file:cursor-pointer"
-                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                onChange={(e) => {
+                  const nextFile = e.target.files?.[0] ?? null;
+                  setFile(nextFile);
+                  if (nextFile && !SUPPORTED_IMAGE_TYPES.has(nextFile.type)) {
+                    setError(`Please use a ${SUPPORTED_IMAGE_LABEL} image.`);
+                  } else if (error) {
+                    setError(null);
+                  }
+                }}
               />
+              <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                Supported formats: {SUPPORTED_IMAGE_LABEL}.
+              </p>
             </div>
           ) : (
             <div>

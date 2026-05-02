@@ -32,21 +32,34 @@ export default function FlavorEditForm({
           <input type="hidden" name="id" value={id} />
 
           <div>
-            <label className="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label
+              htmlFor="flavor-slug"
+              className="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300"
+            >
               Slug
             </label>
             <input
+              id="flavor-slug"
               name="slug"
+              required
+              autoComplete="off"
               defaultValue={slug ?? ""}
               className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-slate-100/20 transition-shadow"
             />
+            <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+              Keep this unique so it is easy to find in lists and analytics.
+            </p>
           </div>
 
           <div>
-            <label className="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label
+              htmlFor="flavor-description"
+              className="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300"
+            >
               Description
             </label>
             <textarea
+              id="flavor-description"
               name="description"
               rows={3}
               defaultValue={description ?? ""}
@@ -56,7 +69,10 @@ export default function FlavorEditForm({
           </div>
 
           {updateState.error && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-red-700 text-sm dark:border-red-800 dark:bg-red-950/30 dark:text-red-200">
+            <div
+              role="alert"
+              className="rounded-lg border border-red-200 bg-red-50 p-3 text-red-700 text-sm dark:border-red-800 dark:bg-red-950/30 dark:text-red-200"
+            >
               {updateState.error}
             </div>
           )}

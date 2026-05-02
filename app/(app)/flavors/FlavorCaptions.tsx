@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- Admin thumbnails use arbitrary external URLs from Supabase rows. */
+
 import { useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { formatDate } from "@/lib/formatDate";
